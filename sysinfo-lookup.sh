@@ -42,6 +42,19 @@ round() {
     printf '%.*f\n' "$df" "$(bc -l <<< "a=$1; if(a>0) a+=5/10^($df+1) else if (a<0) a-=5/10^($df+1); scale=$df; a/1")"
 }
 
+# Checks if running on target machine
+on_dev_check () {
+	read -r -p "Are we running on device in question? [y/N] " response
+	case "$response" in
+	    [yY][eE][sS]|[yY]) 
+			return 0
+		;;
+	    *)
+			return 1
+	    ;;
+	esac
+}
+
 # Gets system info about Linux & other non-Apple Unix systems
 linux_info() {
 	# Try sudo
@@ -250,6 +263,30 @@ on_device() {
 	fi
 }
 
+display_menu() {
+	echo "1:  Lookup sysinfo about Linux Machine
+2:  Lookup sysinfo about OSX Machine
+3:  Indentify Apple Product By Serial
+	"
+
+	read -r -p "Please choose an option: " response
+	case "$response" in
+		1)
+			linux_info
+		;;
+		2)
+			mac_info
+		;;
+		3)
+			req_serial
+			check_serial
+		;;
+		*)
+			echo "Invalid option!"
+		;;
+	esac
+}
+
 # Proccess input arguments
 while [[ $# -gt 0 ]]
 do
@@ -289,16 +326,6 @@ done
 # Check if interactive mode disabled
 if [ ! "${interactive}" = false ]; then
 	print_info
-	# Check if running on target machine
-	read -r -p "Are we running on device in question? [y/N] " response
-	case "$response" in
-	    [yY][eE][sS]|[yY]) 
-			on_device
-		;;
-	    *)
-			req_serial
-			check_serial
-	    ;;
-	esac
+	display_menu
 fi
 
