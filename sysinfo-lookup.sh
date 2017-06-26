@@ -93,6 +93,23 @@ linux_info() {
 	echo "Mem Total: ${total_mem} GB"
 	echo "Mem Free: ${free_mem} MB"
 
+	# Calculate disk usage for common partitions
+	free_root=$(df -BG / | grep / | awk '{print $4}')
+	free_home=$(df -BG /home | grep / | awk '{print $4}')
+	free_scratch=$(df -BG /scratch 2>/dev/null | grep / | awk '{print $4}')
+	# Calculate disk capacity
+	total_hdd=$(lsblk -b --output SIZE -n -d /dev/sda)
+	total_hdd=$((${total_hdd}/1000000000))
+	# Output disk stats
+	echo "Disk Size: ${total_hdd} GB"
+	echo -n "Disk Free: ${free_root//[!0-9]/} GB ROOT, ${free_home//[!0-9]/} GB HOME"
+	# Output notification if no scratch partition found
+	if [ $free_scratch ]; then
+		echo ", ${free_scratch//[!0-9]/} GB SCRATCH"
+	else
+		echo "." && echo "           No scratch partition found."
+	fi
+
 	# Calculate system uptime
 	seconds=$(cat /proc/uptime | awk '{print $1}')
 	seconds=${seconds%.*}
@@ -148,6 +165,13 @@ mac_info() {
 	# Output system memory details
 	echo "Mem Total: $total_mem GB"
 	echo "Mem Free: $free_mem MB"
+
+	# Calculate disk drive capacity & usage
+	total_hdd=$(diskutil info disk0 | grep "Disk Size" | awk '{print $3,$4}')
+	free_hdd=$(df -bg / | grep / | awk '{print $4}')
+	# Output disk drive stats
+	echo "Disk Size: ${total_hdd}"
+	echo "Disk Free: ${free_hdd} GB"
 
 	# Calculate system uptime
 	boot_sec=$(sysctl -n kern.boottime | awk '{print $4}')
