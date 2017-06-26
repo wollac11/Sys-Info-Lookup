@@ -71,21 +71,27 @@ linux_info() {
 	# Try sudo
 	sudo echo &> /dev/null
 
+	# Get system manufacturer
 	vendor=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
+	# Fallback to motherboard manufacturer if product manufacturer unavailable
 	if [[ $vendor = *[!\ ]* ]]; then
 		echo "System Manufacturer: ${vendor}" 
 	else
 		echo "MB Manufacturer: $(cat /sys/devices/virtual/dmi/id/board_vendor)"
 	fi 
 
+	# Get system product name
 	product=$(cat /sys/devices/virtual/dmi/id/product_name)
+	# Fallback to motherboard model if product model unavailable
 	if [[ $product = *[!\ ]* ]]; then
 		echo "Model: ${product}" 
 	else
 		echo "MB Model: $(cat /sys/devices/virtual/dmi/id/board_name)" 
 	fi
 
+	# Get system serial
 	serial=$(sudo cat /sys/devices/virtual/dmi/id/product_serial)
+	# Fallback to motherboard serial if product serial unavailable
 	if [[ $serial = *[!\ ]* ]]; then
 		echo "Serial: ${serial}" 
 	else
@@ -291,8 +297,11 @@ check_unix() {
 }
 
 # Checks if OS is a tested to be compatible
+# and runs most appropriate function
 sys_info() {
+	# Check Unix type
 	check_unix
+	# Select correct sys_info function
 	case "$?" in
 		0) linux_info ;;
 		1) mac_info ;;
@@ -313,6 +322,7 @@ sys_info() {
 	esac
 }
 
+# Displays options menu
 display_menu() {
 	echo "1:  Lookup system info for current machine
 2:  Lookup system info for remote machine
@@ -322,15 +332,19 @@ display_menu() {
 	read -r -p "Please choose an option: " response
 	case "$response" in
 		1)
+			# Run system info check locally
 			sys_info
 		;;
 		2)
+			# Get SSH target from user
 			read -r -p "Target hostname or IP: " host
-			
+			# Run system info function on remote target
 			typeset -f | ssh -To StrictHostKeyChecking=no "${host}" "$(cat);sys_info"
 		;;
 		3)
+			# Request serial from user
 			req_serial
+			# Check serial for model name
 			check_serial
 		;;
 		*)
@@ -377,6 +391,8 @@ done
 
 # Check if interactive mode disabled
 if [ ! "${interactive}" = false ]; then
+	# Display script info
 	print_info
+	# Run interactive menu
 	display_menu
 fi
