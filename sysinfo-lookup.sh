@@ -114,6 +114,20 @@ linux_info() {
 		echo "." && echo "           No scratch partition found."
 	fi
 
+	# Output type of storage medium in use for primary disk
+	echo -n "Disk Type: "
+	hdd_bool=$(cat /sys/block/sda/queue/rotational)
+	if [ $hdd_bool == "1" ]; then
+		echo "Rotational"
+		hdd_rpm=$(sudo hdparm -I /dev/sda | grep Rotation | awk '{print $5}')
+		# If drive is a rotational disk, output its RPM
+		if [[ "${hdd_rpm}" ]]; then 
+			echo "Disk Rotation Speed: ${hdd_rpm} RPM" 
+		fi
+	else
+		echo "Solid State"
+	fi
+
 	# Calculate system uptime
 	seconds=$(cat /proc/uptime | awk '{print $1}')
 	seconds=${seconds%.*}
@@ -180,6 +194,20 @@ mac_info() {
 	# Output disk drive stats
 	echo "Disk Size: ${total_hdd}"
 	echo "Disk Free: ${free_hdd} GB"
+
+	# Output type of storage medium in use for primary disk
+	echo -n "Disk Type: "
+	hdd_bool=$(diskutil info disk0 | grep "Solid State" | awk '{print $3}')
+	if [ $hdd_bool == "No" ]; then
+		echo "Rotational"
+		hdd_rpm=$(system_profiler SPSerialATADataType | grep "Rotational Rate" | awk '{print $3}')
+		# If drive is a rotational disk, output its RPM
+		if [[ "${hdd_rpm}" ]]; then 
+			echo "Disk Rotation Speed: ${hdd_rpm} RPM" 
+		fi
+	else
+		echo "Solid State"
+	fi
 
 	# Calculate system uptime
 	boot_sec=$(sysctl -n kern.boottime | awk '{print $4}')
