@@ -42,6 +42,17 @@ round() {
     printf '%.*f\n' "$df" "$(bc -l <<< "a=$1; if(a>0) a+=5/10^($df+1) else if (a<0) a-=5/10^($df+1); scale=$df; a/1")"
 }
 
+# Converts Unixtime to DDHHMM
+display_time() {
+	local T=$1
+	local D=$((T/60/60/24))
+	local H=$((T/60/60%24))
+	local M=$((T/60%60))
+	printf '%d days, ' $D
+	printf '%d hours, ' $H
+	printf '%d minutes.\n' $M
+}
+
 # Checks if running on target machine
 on_dev_check () {
 	read -r -p "Are we running on device in question? [y/N] " response
