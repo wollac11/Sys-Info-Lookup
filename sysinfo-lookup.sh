@@ -58,7 +58,7 @@ linux_info() {
 	fi
 }
 
-# Gets serial of currently in-use device
+# Gets info of currently in-use device
 on_device() {
 	# Verify machine is running OSX
 	if [[ "$OSTYPE" =~ darwin.* ]]; then
