@@ -93,6 +93,7 @@ do
 			serial=$2
 			interactive=false
 			print_info
+			check_serial
 			if [ ! "${serial}" ]; then
 				echo "No serial entered!"
 				req_serial
