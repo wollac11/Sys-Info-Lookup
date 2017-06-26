@@ -8,11 +8,11 @@ req_serial() {
 
 # Intro header
 print_info() {
-	echo "------------------------
--  Apple Model Lookup  -
--     Version 1.0      -
--  C.W.A. Callow 2017  -
-------------------------
+	echo "-----------------------
+----SYS INFO LOOKUP----
+------Version 1.0------
+--Charlie Callow 2017--
+-----------------------
 "
 }
 
