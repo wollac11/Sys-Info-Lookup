@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Requests serial from user
-req_serial() {
-	echo -n "Please enter Apple serial number: "
-	read serial
-}
-
 # Intro header
 print_info() {
 	echo "-----------------------
@@ -23,6 +17,12 @@ print_help() {
     echo "-s | --serial [serial no.]	: Lookup model from Apple serial"
     echo "-d | --ondevice           	: Get system info for current machine"
     echo "-r | --remote [user@host] 	: Get system info for remote machine"
+}
+
+# Requests serial from user
+req_serial() {
+	echo -n "Please enter Apple serial number: "
+	read serial
 }
 
 # Looks up model from Apple serial
