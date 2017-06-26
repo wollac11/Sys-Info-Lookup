@@ -54,19 +54,6 @@ display_time() {
 	printf '%d minutes.\n' $M
 }
 
-# Checks if running on target machine
-on_dev_check () {
-	read -r -p "Are we running on device in question? [y/N] " response
-	case "$response" in
-	    [yY][eE][sS]|[yY]) 
-			return 0
-		;;
-	    *)
-			return 1
-	    ;;
-	esac
-}
-
 # Gets system info about Linux & other non-Apple Unix systems
 linux_info() {
 	# Try sudo
