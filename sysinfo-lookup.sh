@@ -24,15 +24,27 @@ print_help() {
     echo "-d | --ondevice           	: Get info from current system"
 }
 
+# Looks up model from Apple serial
+check_serial() {
+	# Remove first 8 chars
+	ser_end=$(echo "${serial}" | cut -c 9-)
+
+	# Lookup & output model
+	echo -n "Model: "
+	curl -s http://support-sp.apple.com/sp/product?cc=${ser_end} | awk -v FS="(<configCode>|</configCode>)" '{print $2}'
+}
+
 # Gets serial of currently in-use device
 on_mac() {
 	# Verify machine is running OSX
 	if [[ "$OSTYPE" =~ darwin.* ]]; then
 		# Obtain serial from system
 		serial=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
+		check_serial
 	else
 		echo "This is not a Mac!"
 		req_serial
+		check_serial
 	fi
 }
 
@@ -82,13 +94,8 @@ if [ ! "${interactive}" = false ]; then
 		;;
 	    *)
 			req_serial
+			check_serial
 	    ;;
 	esac
 fi
 
-# Remove first 8 chars
-ser_end=$(echo "${serial}" | cut -c 9-)
-
-# Lookup & output model
-echo -n "Model: "
-curl -s http://support-sp.apple.com/sp/product?cc=${ser_end} | awk -v FS="(<configCode>|</configCode>)" '{print $2}'
