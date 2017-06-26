@@ -92,6 +92,14 @@ linux_info() {
 	# Output system memory details
 	echo "Mem Total: ${total_mem} GB"
 	echo "Mem Free: ${free_mem} MB"
+
+	# Calculate system uptime
+	seconds=$(cat /proc/uptime | awk '{print $1}')
+	seconds=${seconds%.*}
+	# Output system uptime in hours, mins and days
+	echo -n "Uptime: "
+	echo $((seconds/86400))" days,"\
+     $(date -d "1970-01-01 + $seconds seconds" "+%H hours, %M minutes.")
 }
 
 mac_info() {
@@ -127,6 +135,14 @@ mac_info() {
 	# Output system memory details
 	echo "Mem Total: $total_mem GB"
 	echo "Mem Free: $free_mem MB"
+
+	# Calculate system uptime
+	boot_sec=$(sysctl -n kern.boottime | awk '{print $4}')
+	boot_sec=${boot_sec//[!0-9]/}
+	boottime=$(($(date +%s)-boot_sec))
+	# Output system uptime in hours, mins and days
+	echo -n "Uptime: "
+	display_time "${boottime}"
 }
 
 # Gets info of currently in-use device
