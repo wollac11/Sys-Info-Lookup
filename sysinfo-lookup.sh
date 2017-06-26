@@ -93,6 +93,10 @@ linux_info() {
 	echo "Mem Total: ${total_mem} GB"
 	echo "Mem Free: ${free_mem} MB"
 
+	# Output disk model
+	hdd_model=$(sudo smartctl -i /dev/sda | grep Family | awk '{ for( i=3; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }')
+	echo "Disk Model: ${hdd_model}"
+	
 	# Calculate disk usage for common partitions
 	free_root=$(df -BG / | grep / | awk '{print $4}')
 	free_home=$(df -BG /home | grep / | awk '{print $4}')
@@ -165,6 +169,10 @@ mac_info() {
 	# Output system memory details
 	echo "Mem Total: $total_mem GB"
 	echo "Mem Free: $free_mem MB"
+
+	# Output disk model
+	hdd_model=$(diskutil info disk0 | grep "Media Name" | awk '{print $5}')
+	echo "Disk Model: ${hdd_model}"
 
 	# Calculate disk drive capacity & usage
 	total_hdd=$(diskutil info disk0 | grep "Disk Size" | awk '{print $3,$4}')
