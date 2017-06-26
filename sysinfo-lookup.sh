@@ -20,8 +20,9 @@ print_info() {
 print_help() {
     echo "-h | --help               	: See this options list"
     echo "-a | --about              	: View version info"
-    echo "-s | --serial [serial no.]	: Provide serial (non-interactive mode)"
-    echo "-d | --ondevice           	: Get info from current system"
+    echo "-s | --serial [serial no.]	: Lookup model from Apple serial"
+    echo "-d | --ondevice           	: Get system info for current machine"
+    echo "-r | --remote [user@host] 	: Get system info for remote machine"
 }
 
 # Looks up model from Apple serial
