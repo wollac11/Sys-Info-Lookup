@@ -128,6 +128,10 @@ linux_info() {
 		echo "Solid State"
 	fi
 
+	# Check drive S.M.A.R.T. Health
+	hdd_health=$(sudo smartctl -H /dev/sda | grep "overall-health" | awk '{print $6}')
+	echo "SMART Status: ${hdd_health}"
+
 	# Calculate system uptime
 	seconds=$(cat /proc/uptime | awk '{print $1}')
 	seconds=${seconds%.*}
@@ -207,6 +211,14 @@ mac_info() {
 		fi
 	else
 		echo "Solid State"
+	fi
+
+	# Check drive S.M.A.R.T. Health
+	hdd_health=$(diskutil info disk0 | grep "SMART Status:" | awk '{print $3}')
+	if [ $hdd_health == "Verified" ]; then
+		echo "SMART Status: PASSED"
+	else
+		echo "SMART Status: FAILING"
 	fi
 
 	# Calculate system uptime
