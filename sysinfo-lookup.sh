@@ -21,7 +21,7 @@ print_help() {
     echo "-h | --help               	: See this options list"
     echo "-a | --about              	: View version info"
     echo "-s | --serial [serial no.]	: Provide serial (non-interactive mode)"
-    echo "-d | --ondevice           	: Get serial from current system"
+    echo "-d | --ondevice           	: Get info from current system"
 }
 
 # Gets serial of currently in-use device
