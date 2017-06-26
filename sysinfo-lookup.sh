@@ -38,7 +38,7 @@ check_serial() {
 linux_info() {
 	# Try sudo
 	sudo echo &> /dev/null
-	
+
 	vendor=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
 	if [[ $vendor = *[!\ ]* ]]; then
 		echo "System Manufacturer: ${vendor}" 
@@ -61,13 +61,17 @@ linux_info() {
 	fi
 }
 
+mac_info() {
+	# Obtain serial from system
+	serial=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
+	check_serial
+}
+
 # Gets info of currently in-use device
 on_device() {
 	# Verify machine is running OSX
 	if [[ "$OSTYPE" =~ darwin.* ]]; then
-		# Obtain serial from system
-		serial=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
-		check_serial
+		mac_info
 	else
 		linux_info
 	fi
