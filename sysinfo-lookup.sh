@@ -34,6 +34,14 @@ check_serial() {
 	curl -s http://support-sp.apple.com/sp/product?cc=${ser_end} | awk -v FS="(<configCode>|</configCode>)" '{print $2}'
 }
 
+# Evaluates expression and rounds result
+round() {
+    # $1 is expression to round (should be a valid bc expression)
+    # $2 is number of decimal figures (optional). Defaults to three if none given
+    local df=${2:-3}
+    printf '%.*f\n' "$df" "$(bc -l <<< "a=$1; if(a>0) a+=5/10^($df+1) else if (a<0) a-=5/10^($df+1); scale=$df; a/1")"
+}
+
 # Gets system info about Linux & other non-Apple Unix systems
 linux_info() {
 	# Try sudo
@@ -65,6 +73,25 @@ linux_info() {
 	
 	# Output system kernel version
 	echo "Kernel: $(uname -mrs)"
+
+	# Output CPU model and core/thread count
+	cpu_model=$(grep -m 1 "model name" /proc/cpuinfo |  awk '{ for( i=4 ; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }')
+	cpu_count=$(cat /proc/cpuinfo | grep processor | wc -l)
+	echo "CPU: ${cpu_model}x ${cpu_count}"
+
+	# Calculate total memory
+	total_mem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+	if [ "${total_mem}" -ge "2000000" ]; then
+		total_mem=$(round ""$total_mem"/1000000" "0")
+	else
+		total_mem=$(round ""$total_mem"/1000000" "1")
+	fi
+	# Calculate free memory
+	free_mem=$(vmstat -s | grep "free memory" | awk '{print $1}')
+	free_mem=$((free_mem/1024))
+	# Output system memory details
+	echo "Mem Total: ${total_mem} GB"
+	echo "Mem Free: ${free_mem} MB"
 }
 
 mac_info() {
@@ -85,6 +112,21 @@ mac_info() {
 	
 	# Output system kernel version
 	echo "Kernel: $(uname -mrs)"
+
+	# Output CPU model	
+	echo -n "CPU: "
+	sysctl -n machdep.cpu.brand_string
+
+	# Calculate 'free' memory
+	free_blocks=$(vm_stat | grep free | awk '{ print $3 }' | sed 's/\.//')
+	speculative_blocks=$(vm_stat | grep speculative | awk '{ print $3 }' | sed 's/\.//')
+	free_mem=$((($free_blocks+speculative_blocks)*4096/1048576))
+	# Calculate total memory
+	phys=$(sysctl hw.memsize)
+	total_mem=$(((${phys//[!0-9]/}/1073741824)))
+	# Output system memory details
+	echo "Mem Total: $total_mem GB"
+	echo "Mem Free: $free_mem MB"
 }
 
 # Gets info of currently in-use device
