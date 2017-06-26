@@ -79,7 +79,7 @@ do
         -d|--ondevice)
 			interactive=false
 			print_info
-			on_mac
+			on_device
             shift # past argument
         ;;
         -s|--serial)
