@@ -59,6 +59,12 @@ linux_info() {
 	else
 		echo "MB Serial: $(sudo cat /sys/devices/virtual/dmi/id/board_serial)" 
 	fi
+
+	# Output OS distrubtion name & version
+	echo "OS: $(lsb_release -a 2>/dev/null | grep "Description" | awk '{ for( i=2 ; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }')"
+	
+	# Output system kernel version
+	echo "Kernel: $(uname -mrs)"
 }
 
 mac_info() {
@@ -70,6 +76,15 @@ mac_info() {
 	check_serial
 	# Display serial
 	echo "Serial: ${serial}"
+
+	# Output OS version from system
+	os_ver=$(sw_vers -productVersion)
+	echo -n "OS: ${os_ver} "
+	# Lookup & output marketing name for OS release
+	curl -s http://support-sp.apple.com/sp/product?edid=${os_ver} | awk -v FS="(<configCode>|</configCode>)" '{print $2}'
+	
+	# Output system kernel version
+	echo "Kernel: $(uname -mrs)"
 }
 
 # Gets info of currently in-use device
