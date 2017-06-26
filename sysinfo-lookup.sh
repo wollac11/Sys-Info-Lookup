@@ -49,6 +49,13 @@ linux_info() {
 	else
 		echo "MB Model: $(cat /sys/devices/virtual/dmi/id/board_name)" 
 	fi
+
+	serial=$(sudo cat /sys/devices/virtual/dmi/id/product_serial)
+	if [[ $serial = *[!\ ]* ]]; then
+		echo "Serial: ${serial}" 
+	else
+		echo "MB Serial: $(sudo cat /sys/devices/virtual/dmi/id/board_serial)" 
+	fi
 }
 
 # Gets serial of currently in-use device
