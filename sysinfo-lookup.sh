@@ -100,6 +100,19 @@ linux_info() {
 	echo -n "Uptime: "
 	echo $((seconds/86400))" days,"\
      $(date -d "1970-01-01 + $seconds seconds" "+%H hours, %M minutes.")
+
+    # Get list of logged in users
+    pc_users=$(users)
+    # Remove duplicate entries for users with multiple sessions
+	declare -A uniq
+	for k in $pc_users ; do uniq[$k]=1 ; done
+	# Output list of users logged into machine
+	echo -n "Users Logged In: "
+	if [[ ${!uniq[@]} ]]; then
+		echo ${!uniq[@]}
+	else
+		echo "None"
+	fi
 }
 
 mac_info() {
@@ -143,6 +156,16 @@ mac_info() {
 	# Output system uptime in hours, mins and days
 	echo -n "Uptime: "
 	display_time "${boottime}"
+
+	# Get list of current users & remove duplicates
+	pc_users=$(users | tr ' ' '\n' | sort | uniq | tr '\n' ' ' | sed -e 's/[[:space:]]*$//')
+	# Output list of users logged into machine
+	echo -n "Users Logged In: "
+	if [[ ${pc_users} ]]; then
+		echo ${pc_users}
+	else
+		echo "None"
+	fi
 }
 
 # Gets info of currently in-use device
