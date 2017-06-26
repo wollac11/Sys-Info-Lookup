@@ -34,17 +34,32 @@ check_serial() {
 	curl -s http://support-sp.apple.com/sp/product?cc=${ser_end} | awk -v FS="(<configCode>|</configCode>)" '{print $2}'
 }
 
+# Gets system info about Linux & other non-Apple Unix systems
+linux_info() {
+	vendor=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
+	if [[ $vendor = *[!\ ]* ]]; then
+		echo "System Manufacturer: ${vendor}" 
+	else
+		echo "MB Manufacturer: $(cat /sys/devices/virtual/dmi/id/board_vendor)"
+	fi 
+
+	product=$(cat /sys/devices/virtual/dmi/id/product_name)
+	if [[ $product = *[!\ ]* ]]; then
+		echo "Model: ${product}" 
+	else
+		echo "MB Model: $(cat /sys/devices/virtual/dmi/id/board_name)" 
+	fi
+}
+
 # Gets serial of currently in-use device
-on_mac() {
+on_device() {
 	# Verify machine is running OSX
 	if [[ "$OSTYPE" =~ darwin.* ]]; then
 		# Obtain serial from system
 		serial=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
 		check_serial
 	else
-		echo "This is not a Mac!"
-		req_serial
-		check_serial
+		linux_info
 	fi
 }
 
@@ -90,7 +105,7 @@ if [ ! "${interactive}" = false ]; then
 	read -r -p "Are we running on device in question? [y/N] " response
 	case "$response" in
 	    [yY][eE][sS]|[yY]) 
-			on_mac
+			on_device
 		;;
 	    *)
 			req_serial
