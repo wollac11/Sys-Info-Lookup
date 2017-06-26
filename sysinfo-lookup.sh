@@ -322,6 +322,18 @@ sys_info() {
 	esac
 }
 
+# Get system info for a remote machine
+remote_info() {
+	if [[ $1 ]]; then
+		host=$1
+	else
+		# Get SSH target from user
+		read -r -p "Target hostname or IP: " host
+	fi
+	# Run system info function on remote target
+	typeset -f | ssh -To StrictHostKeyChecking=no "${host}" "$(cat);sys_info"
+}
+
 # Displays options menu
 display_menu() {
 	echo "1:  Lookup system info for current machine
@@ -336,10 +348,8 @@ display_menu() {
 			sys_info
 		;;
 		2)
-			# Get SSH target from user
-			read -r -p "Target hostname or IP: " host
-			# Run system info function on remote target
-			typeset -f | ssh -To StrictHostKeyChecking=no "${host}" "$(cat);sys_info"
+			# Run system info check on remote machine
+			remote_info
 		;;
 		3)
 			# Request serial from user
@@ -381,6 +391,15 @@ do
 				req_serial
 			fi
 			check_serial
+		;;
+        -r|--remote)
+			host=$2
+			interactive=false
+			print_info
+			if [ ! "${host}" ]; then
+				echo "No host entered!"
+			fi
+			remote_info "${host}"
         ;;
         *)
                 # unknown option
