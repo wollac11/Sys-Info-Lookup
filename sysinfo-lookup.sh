@@ -36,6 +36,9 @@ check_serial() {
 
 # Gets system info about Linux & other non-Apple Unix systems
 linux_info() {
+	# Try sudo
+	sudo echo &> /dev/null
+	
 	vendor=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
 	if [[ $vendor = *[!\ ]* ]]; then
 		echo "System Manufacturer: ${vendor}" 
