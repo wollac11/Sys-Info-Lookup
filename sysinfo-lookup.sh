@@ -264,29 +264,70 @@ mac_info() {
 	fi
 }
 
-# Gets info of currently in-use device
-on_device() {
-	# Verify machine is running OSX
-	if [[ "$OSTYPE" =~ darwin.* ]]; then
-		mac_info
-	else
-		linux_info
-	fi
+# Checks which Unix varient we are running on
+check_unix() {
+	case "$OSTYPE" in
+	solaris*) 
+		os_type="Solaris"
+		return 3
+	;;
+	darwin*)  
+		os_type="OSX" 
+		return 1
+	;; 
+	linux*)   
+		os_type="Linux" 
+		return 0
+	;;
+	bsd*)     
+		os_type="BSD"
+		return 3
+	;;
+	*)        
+		os_type="unknown: $OSTYPE" 
+		return 4
+	;;
+	esac
+}
+
+# Checks if OS is a tested to be compatible
+sys_info() {
+	check_unix
+	case "$?" in
+		0) linux_info ;;
+		1) mac_info ;;
+		*)
+			echo "Warning: Untested Operating System (${os_type})!"
+			read -r -p "This OS may not be compatible. Try anyway? [y/N] " response
+			case "$response" in
+			    [yY][eE][sS]|[yY]) 
+					echo "Procceding..."
+					linux_info
+			    ;;
+			    *)
+					echo "Exiting..."
+			    	exit
+			    ;;
+			esac
+		;;
+	esac
 }
 
 display_menu() {
-	echo "1:  Lookup sysinfo about Linux Machine
-2:  Lookup sysinfo about OSX Machine
+	echo "1:  Lookup system info for current machine
+2:  Lookup system info for remote machine
 3:  Indentify Apple Product By Serial
 	"
 
 	read -r -p "Please choose an option: " response
 	case "$response" in
 		1)
-			linux_info
+			sys_info
 		;;
 		2)
-			mac_info
+			read -r -p "Target hostname or IP: " host
+			
+			typeset -f | ssh -To StrictHostKeyChecking=no "${host}" "$(cat);sys_info"
 		;;
 		3)
 			req_serial
@@ -314,7 +355,7 @@ do
         -d|--ondevice)
 			interactive=false
 			print_info
-			on_device
+			sys_info
             shift # past argument
         ;;
         -s|--serial)
@@ -339,4 +380,3 @@ if [ ! "${interactive}" = false ]; then
 	print_info
 	display_menu
 fi
-
