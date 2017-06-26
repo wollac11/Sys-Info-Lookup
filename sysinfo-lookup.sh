@@ -62,9 +62,14 @@ linux_info() {
 }
 
 mac_info() {
+	echo "Manufacturer: Apple Inc."
+
 	# Obtain serial from system
 	serial=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
+	# Get model from serial
 	check_serial
+	# Display serial
+	echo "Serial: ${serial}"
 }
 
 # Gets info of currently in-use device
