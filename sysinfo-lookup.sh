@@ -150,6 +150,10 @@ linux_info() {
 	hdd_health=$(sudo smartctl -H /dev/sda | grep "overall-health" | awk '{print $6}')
 	echo "SMART Status: ${hdd_health}"
 
+	# Get system installation date
+	echo -n "System Installed: "
+	sudo ls -alct /|tail -1|awk '{print $6, $7, $8}'
+
 	# Calculate system uptime
 	seconds=$(cat /proc/uptime | awk '{print $1}')
 	seconds=${seconds%.*}
@@ -238,6 +242,10 @@ mac_info() {
 	else
 		echo "SMART Status: FAILING"
 	fi
+
+	# Get system install date
+	echo -n "System Installed: "
+	ls -la /var/log/CDIS.custom | awk '{print $6, $7, $8}'
 
 	# Calculate system uptime
 	boot_sec=$(sysctl -n kern.boottime | awk '{print $4}')
