@@ -26,7 +26,7 @@ Download and run script from BASH shell. Script can be used interactively or by 
 - cURL
 - smartmontools (on target Linux systems)
 
-**Apple Serial Number Lookup Compatibility:**
+**Serial Number Lookup Compatibility:**
 
 Known to work:  
 - Macs including iMac, Macbook & Mac Pro lines  
