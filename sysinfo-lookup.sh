@@ -387,6 +387,7 @@ do
 				req_serial
 			fi
 			check_serial
+			shift # past argument
 		;;
         -r|--remote)
 			host=$2
@@ -396,6 +397,7 @@ do
 				echo "No host entered!"
 			fi
 			remote_info "${host}"
+			shift # past argument
         ;;
         *)
                 # unknown option
