@@ -1,4 +1,6 @@
 # Sys-Info-Lookup
+*Forked from my own [Apple-Model-Lookup](https://github.com/wollac11/Apple-Model-Lookup/) script.*
+
 Look up system information for a local or remote machine or check the model / marketing name of any Apple product by its serial number (excluding peripherals).
 
 **Usage:**
