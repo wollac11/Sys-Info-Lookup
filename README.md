@@ -1,7 +1,7 @@
 # Sys-Info-Lookup
 Look up system information for a local or remote machine or check the model / marketing name of any Apple product by its serial number (excluding peripherals).
 
-Usage:
+**Usage:**
 Download and run script from BASH shell. Script can be used interactively or by supplying the appropriate input arguments.
 
 - Interactive Mode: 
@@ -16,14 +16,14 @@ Download and run script from BASH shell. Script can be used interactively or by 
 	-l | --local              	: Get system info for current machine  
 	-r | --remote [user@host] 	: Get system info for remote machine
 
-System Requirements:
+**System Requirements:**
 
 - A Unix-based operating system (such as Linux or MacOS)
 - BASH Shell
 - AWK
 - cURL
 
-Apple Serial Number Lookup Compatibility:
+**Apple Serial Number Lookup Compatibility:**
 
 Known to work:  
 - Macs including iMac, Macbook & Mac Pro lines  
@@ -41,5 +41,4 @@ Won't work:
 - Non-Apple devices
 
 
-
-Note: This script will not run on Windows. A Windows/DOS version may be considered in the future.
+**Note:** This script will not run on Windows. A Windows/DOS version may be considered in the future.
