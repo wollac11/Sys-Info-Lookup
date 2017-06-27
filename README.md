@@ -24,6 +24,7 @@ Download and run script from BASH shell. Script can be used interactively or by 
 - BASH Shell
 - AWK
 - cURL
+- smartmontools (on target Linux systems)
 
 **Apple Serial Number Lookup Compatibility:**
 
