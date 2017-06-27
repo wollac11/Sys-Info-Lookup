@@ -152,7 +152,7 @@ linux_info() {
 
 	# Get system installation date
 	echo -n "System Installed: "
-	sudo tune2fs -l /dev/sda1 | grep created | awk '{print $4, $5, $7}'
+	sudo tune2fs -l /dev/sda1 | grep created | awk '{print $5, $4, $7}'
 
 	# Calculate system uptime
 	seconds=$(cat /proc/uptime | awk '{print $1}')
