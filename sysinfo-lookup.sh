@@ -400,7 +400,8 @@ do
 			shift # past argument
         ;;
         *)
-                # unknown option
+            # unknown option
+            echo "Warning! Invalid argument: '${1}'"
         ;;
     esac
     shift # past argument or value
