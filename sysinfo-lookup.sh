@@ -372,7 +372,7 @@ do
             print_info
             exit
         ;;
-        -d|--ondevice)
+        -l|--local)
 			interactive=false
 			print_info
 			sys_info
