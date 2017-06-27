@@ -376,7 +376,6 @@ do
 			interactive=false
 			print_info
 			sys_info
-            shift # past argument
         ;;
         -s|--serial)
 			serial=$2
