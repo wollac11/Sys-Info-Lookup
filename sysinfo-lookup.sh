@@ -318,6 +318,27 @@ sys_info() {
 	esac
 }
 
+# Checks remote host connectivity and OS family (Windows / Unix)
+check_target() {
+	echo "Checking connectivity to remote machine..."
+	if ping -c 1 ${host} &> /dev/null
+	then
+		echo "Connection Success!"
+		# Detect OS family by TTL
+		tcp_ttl=$(ping -c 1 ${host} 2> /dev/null | grep "bytes from" | awk '{print $7}')
+		if (("${tcp_ttl//[!0-9.]/}" >= 117 && "${tcp_ttl//[!0-9.]/}" <= 137)); then
+			# Windows-based system
+			return 1 
+		else
+			# Unix-based system 
+			return 0
+		fi
+	else
+		# No connection
+		return 2
+	fi
+}
+
 # Get system info for a remote machine
 remote_info() {
 	if [[ $1 ]]; then
@@ -326,8 +347,23 @@ remote_info() {
 		# Get SSH target from user
 		read -r -p "Target hostname or IP: " host
 	fi
-	# Run system info function on remote target
-	typeset -f | ssh -To StrictHostKeyChecking=no "${host}" "$(cat);sys_info"
+
+	# Check remote connectivity and OS family
+	check_target
+	case "$?" in
+		0)
+			# Run system info function on remote target
+			typeset -f | ssh -To StrictHostKeyChecking=no "${host}" "$(cat);sys_info"
+		;;
+		1)
+			echo "ERROR: Remote host appears to be running Windows"
+			exit
+		;;
+		*)
+			echo "Connection to ${host} Failed!"
+			exit
+		;;
+	esac
 }
 
 # Displays options menu
