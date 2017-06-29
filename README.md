@@ -22,7 +22,6 @@ Download and run script from BASH shell. Script can be used interactively or by 
 
 - A Unix-based operating system (such as Linux or MacOS)
 - BASH Shell
-- AWK
 - cURL
 - smartmontools (on target Linux systems)
 
