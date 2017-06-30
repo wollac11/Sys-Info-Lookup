@@ -312,11 +312,11 @@ windows_info() {
 	fi
 
 	# Output results
-	echo "Manufacturer: ${comp_sys_info[0]}
-	Model: ${comp_sys_info[1]}
-	Serial: ${serial_no}
-	Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB
-	Users Logged In: ${pc_users}"
+	echo "Manufacturer: ${comp_sys_info[0]}"
+	echo "Model: ${comp_sys_info[1]}"
+	echo "Serial: ${serial_no}"
+	echo "Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB"
+	echo "Users Logged In: ${pc_users}"
 }
 
 # Checks which Unix varient we are running on
