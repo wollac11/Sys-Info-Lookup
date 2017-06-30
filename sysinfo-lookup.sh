@@ -485,6 +485,9 @@ display_menu() {
 	esac
 }
 
+# Display script info
+print_info
+
 # Proccess input arguments
 while [[ $# -gt 0 ]]
 do
@@ -500,7 +503,6 @@ do
         ;;
         -l|--local)
 			interactive=false
-			print_info
 			sys_info
         ;;
         -u|--user)
@@ -510,7 +512,6 @@ do
         -s|--serial)
 			serial=$2
 			interactive=false
-			print_info
 			if [ ! "${serial}" ]; then
 				echo "No serial entered!"
 				req_serial
@@ -521,7 +522,6 @@ do
         -r|--remote)
 			host=$2
 			interactive=false
-			print_info
 			if [ ! "${host}" ]; then
 				echo "No host entered!"
 			fi
@@ -538,8 +538,6 @@ done
 
 # Check if interactive mode disabled
 if [ ! "${interactive}" = false ]; then
-	# Display script info
-	print_info
 	# Run interactive menu
 	display_menu
 fi
