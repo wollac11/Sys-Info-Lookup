@@ -59,6 +59,28 @@ display_time() {
 	printf '%d minutes.\n' $M
 }
 
+# Verifies WMI-client is present
+wmi_check () {
+	# Check WMIC-client present
+	if [ ! -f $wmic_bin ]; then
+		echo "Missing WMIC-CLIENT (required for Windows hosts)"
+		read -r -p "OK to download? [y/N] " response
+		case "$response" in
+		    [yY][eE][sS]|[yY]) 
+				echo "Downloading WMIC-CLIENT..."
+				wget -P ./DEPENDS/ https://github.com/R-Vision/wmi-client/raw/master/bin/wmic_ubuntu_x64 -q --show-progress
+				echo "WMIC-CLIENT downloaded to ./DEPENDS/wmic_ubuntu_x64" 
+				echo "Setting permissions..."
+				chmod +x "${wmic_bin}" && echo
+		    ;;
+		    *)
+				echo "Unable to procceed! Exiting..."
+		    	exit
+		    ;;
+		esac
+	fi
+}
+
 # Gets system info about Linux & other non-Apple Unix systems
 linux_info() {
 	# Try sudo
@@ -384,6 +406,7 @@ remote_info() {
 		;;
 		1)
 			echo "ERROR: Remote host appears to be running Windows"
+			wmi_check # Check requisite WMI-client is present
 			windows_info
 			exit
 		;;
