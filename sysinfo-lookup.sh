@@ -83,6 +83,7 @@ wmi_check () {
 
 # Gets system info about Linux & other non-Apple Unix systems
 linux_info() {
+	echo && echo "-- $(hostname): --" | tr /a-z/ /A-Z/
 	# Try sudo
 	sudo echo &> /dev/null
 
@@ -201,9 +202,12 @@ linux_info() {
 	else
 		echo "None"
 	fi
+
+	echo "------------" && echo
 }
 
 mac_info() {
+	echo && echo "-- $(hostname): --" | tr /a-z/ /A-Z/
 	echo "Manufacturer: Apple Inc."
 
 	# Obtain serial from system
@@ -291,12 +295,14 @@ mac_info() {
 	else
 		echo "None"
 	fi
+
+	echo "------------" && echo
 }
 
 # Gets system info about Windows systems (EXPERIMENTAL)
 windows_info() {
-	read -s -r -p "Password for ${host}: " pass
-	echo
+	echo && read -s -r -p "Password for ${host}: " pass && echo
+	echo && echo "-- ${host}: --" | tr /a-z/ /A-Z/
 
 	# Build arrays of computer info
 	IFS='|' read -r -a os_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT FreePhysicalMemory,Name,InstallDate,LastBootUpTime,LocalDateTime,Version FROM Win32_OperatingSystem" | tail -1)
@@ -352,6 +358,8 @@ windows_info() {
 	echo "System Installed: ${sys_installed}"
 	echo "Uptime: $(display_time "${sys_up}")"
 	echo "Users Logged In: ${pc_users}"
+	echo "------------" && echo
+
 }
 
 # Checks which Unix varient we are running on
