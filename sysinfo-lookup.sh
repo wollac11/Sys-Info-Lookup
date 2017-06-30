@@ -17,10 +17,10 @@ print_info() {
 print_help() {
     echo "-h | --help               	: See this options list"
     echo "-a | --about              	: View version info"
-    echo "-u | --user 					: Specifiy username for remote machine"
+    echo "-u | --user           		: Specifiy username for remote machine"
     echo "-s | --serial [serial no.]	: Lookup model from Apple serial"
     echo "-d | --ondevice           	: Get system info for current machine"
-    echo "-r | --remote [user@host] 	: Get system info for remote machine"
+    echo "-r | --remote [host]  	 	: Get system info for remote machine"
 }
 
 # Requests serial from user
