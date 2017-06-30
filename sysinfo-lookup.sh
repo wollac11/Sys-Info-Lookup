@@ -277,7 +277,7 @@ windows_info() {
 	echo
 
 	# Build array of computer info
-	IFS='|' read -r -a comp_sys_info <<< $(~/node_modules/wmi-client/bin/wmic_ubuntu_x64 -A winauthfile -U ${user} --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
+	IFS='|' read -r -a comp_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
 
 	# Check if any users logged in
 	if [ ! ${comp_sys_info[4]} == "(null)" ]; then
