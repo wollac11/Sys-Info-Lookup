@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Set defaults
+user=$USER
+
 # Intro header
 print_info() {
 	echo "-----------------------
@@ -14,6 +17,7 @@ print_info() {
 print_help() {
     echo "-h | --help               	: See this options list"
     echo "-a | --about              	: View version info"
+    echo "-u | --user 					: Specifiy username for remote machine"
     echo "-s | --serial [serial no.]	: Lookup model from Apple serial"
     echo "-d | --ondevice           	: Get system info for current machine"
     echo "-r | --remote [user@host] 	: Get system info for remote machine"
@@ -353,7 +357,7 @@ remote_info() {
 	case "$?" in
 		0)
 			# Run system info function on remote target
-			typeset -f | ssh -To StrictHostKeyChecking=no "${host}" "$(cat);sys_info"
+			typeset -f | ssh -To StrictHostKeyChecking=no "${user}@${host}" "$(cat);sys_info"
 		;;
 		1)
 			echo "ERROR: Remote host appears to be running Windows"
@@ -413,6 +417,10 @@ do
 			print_info
 			sys_info
         ;;
+        -u|--user)
+			user=$2
+			shift # past argument
+		;;
         -s|--serial)
 			serial=$2
 			interactive=false
