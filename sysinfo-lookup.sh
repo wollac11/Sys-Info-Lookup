@@ -327,11 +327,14 @@ windows_info() {
 	# Extact dates / times
 	sys_started=$(sed -r 's#(.{4})(.{2})(.{2})(.{2})(.{2})#\1/\2/\3 \4:\5:#' <<< "${os_sys_info[2]%.*}")
 	sys_now=$(sed -r 's#(.{4})(.{2})(.{2})(.{2})(.{2})#\1/\2/\3 \4:\5:#' <<< "${os_sys_info[3]%.*}")
+	sys_installed=$(sed -r 's#(.{4})(.{2})(.{2})(.{2})(.{2})#\1/\2/\3 \4:\5:#' <<< "${os_sys_info[1]%.*}")
 	# Convert to EPOCH
 	sys_started=$(date -d "${sys_started}" "+%s")
 	sys_now=$(date -d "${sys_now}" "+%s")
 	# Calculate difference between current time and start time
 	sys_up=$((sys_now - sys_started))
+	# Convert to human readable date
+	sys_installed=$(date -d "${sys_installed}" +"%d %b %Y")
 
 	# Output results
 	echo "Manufacturer: ${comp_sys_info[0]}"
@@ -346,6 +349,7 @@ windows_info() {
 	echo "Disk Size: $(( disk_drive_info[2] / 1000000000 )) GB"
 	echo "Disk Free: $(round ""${disk_free}"/1073741824" "0" ) GB"
 	echo "SMART Status: ${smart_stat}"
+	echo "System Installed: ${sys_installed}"
 	echo "Uptime: $(display_time "${sys_up}")"
 	echo "Users Logged In: ${pc_users}"
 }
