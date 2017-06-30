@@ -441,7 +441,7 @@ remote_info() {
 	case "$?" in
 		0)
 			# Run system info function on remote target
-			typeset -f | ssh -To StrictHostKeyChecking=no "${user}@${host}" "$(cat);sys_info"
+			ssh -To StrictHostKeyChecking=no "${user}@${host}" "$(typeset -f); sys_info"
 		;;
 		1)
 			echo "WARNING: ${host} appears to be running Windows"
