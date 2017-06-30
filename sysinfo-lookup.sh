@@ -306,6 +306,9 @@ windows_info() {
 	# Get Serial no.
 	serial_no=$(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT SerialNumber from Win32_Bios" | tail -1 | awk -F\| '{print $2}')
 
+	# Get free disk space
+	disk_free=$(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT FreeSpace from Win32_LogicalDisk" | grep "C:" | awk -F\| '{print $2}')
+
 	# Check if any users logged in
 	if [ ! ${comp_sys_info[4]} == "(null)" ]; then
 			pc_users="${comp_sys_info[4]}"
@@ -321,6 +324,7 @@ windows_info() {
 	echo "Kernel: NT ${os_sys_info[7]}"
 	echo "CPU: ${cpu_info[1]} x ${cpu_info[2]}"
 	echo "Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB"
+	echo "Disk Free: $(round ""${disk_free}"/1073741824" "0" ) GB"
 	echo "Users Logged In: ${pc_users}"
 }
 
