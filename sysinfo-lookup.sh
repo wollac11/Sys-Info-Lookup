@@ -19,6 +19,7 @@ print_help() {
     echo "-h | --help               	: See this options list"
     echo "-a | --about              	: View version info"
     echo "-u | --user           		: Specifiy username for remote machine"
+    echo "-L | --log [file]        		: Log results to file"
     echo "-s | --serial [serial no.]	: Lookup model from Apple serial"
     echo "-d | --ondevice           	: Get system info for current machine"
     echo "-r | --remote [host]  	 	: Get system info for remote machine"
@@ -448,14 +449,25 @@ remote_info() {
 	check_target
 	case "$?" in
 		0)
-			# Run system info function on remote target
-			ssh -To StrictHostKeyChecking=no "${user}@${host}" "$(typeset -f); sys_info"
+			if [ ${log} ]; then		# Check if log set
+				# Run system info function on remote target, redirect copy to log
+				ssh -To StrictHostKeyChecking=no "${user}@${host}" "$(typeset -f); sys_info" 2>&1 | tee -a ${log}
+			else
+				# Run system info function on remote target, no log
+				ssh -To StrictHostKeyChecking=no "${user}@${host}" "$(typeset -f); sys_info"
+			fi
 		;;
 		1)
 			echo "WARNING: ${host} appears to be running Windows"
 			echo "Windows support is EXPERIMENTAL!"
 			wmi_check # Check requisite WMI-client is present
-			windows_info
+			if [ ${log} ]; then		# Check if log set
+				# Run Windows sys info function, redirect copy to log
+				windows_info 2>&1 | tee -a ${log}
+			else
+				# Run Windows sys info function, no log
+				windows_info
+			fi
 		;;
 		*)
 			echo "Connection to ${host} Failed!"
@@ -474,8 +486,13 @@ display_menu() {
 	read -r -p "Please choose an option: " response
 	case "$response" in
 		1)
-			# Run system info check locally
-			sys_info
+			if [ ${log} ]; then		# Check if log set
+				# Run system info check locally, redirect copy to log
+				sys_info 2>&1 | tee -a ${log}
+			else
+				# Run system info check locally, no log
+				sys_info
+			fi
 		;;
 		2)
 			# Run system info check on remote machine
@@ -512,6 +529,10 @@ do
         -l|--local)
 			interactive=false
 			sys_info
+        ;;
+        -L|--log)
+			log=$2
+			shift # past argument
         ;;
         -u|--user)
 			user=$2
