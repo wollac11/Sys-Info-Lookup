@@ -302,7 +302,6 @@ mac_info() {
 
 # Gets system info about Windows systems (EXPERIMENTAL)
 windows_info() {
-	echo && read -s -r -p "Password for ${host}: " pass && echo
 	echo && echo "-- ${host}: --" | tr /a-z/ /A-Z/
 
 	# Build arrays of computer info
@@ -461,6 +460,10 @@ remote_info() {
 			echo "WARNING: ${host} appears to be running Windows"
 			echo "Windows support is EXPERIMENTAL!"
 			wmi_check # Check requisite WMI-client is present
+
+			# Get password for Windows target
+			echo && read -s -r -p "Password for ${host}: " pass && echo
+
 			if [ ${log} ]; then		# Check if log set
 				# Run Windows sys info function, redirect copy to log
 				windows_info 2>&1 | tee -a ${log}
