@@ -2,6 +2,7 @@
 
 # Set defaults
 user=$USER
+wmic_bin=./DEPENDS/wmic_ubuntu_x64	# Location of WMIC-Client binary
 
 # Intro header
 print_info() {
@@ -270,6 +271,28 @@ mac_info() {
 	fi
 }
 
+# Gets system info about Windows systems (EXPERIMENTAL)
+windows_info() {
+	read -s -r -p "Password for ${host}: " pass
+	echo
+
+	# Build array of computer info
+	IFS='|' read -r -a comp_sys_info <<< $(~/node_modules/wmi-client/bin/wmic_ubuntu_x64 -A winauthfile -U ${user} --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
+
+	# Check if any users logged in
+	if [ ! ${comp_sys_info[4]} == "(null)" ]; then
+			pc_users="${comp_sys_info[4]}"
+		else
+			pc_users="None"
+	fi
+
+	# Output results
+	echo "Manufacturer: ${comp_sys_info[0]}
+	Model: ${comp_sys_info[1]}
+	Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB
+	Users Logged In: ${pc_users}"
+}
+
 # Checks which Unix varient we are running on
 check_unix() {
 	case "$OSTYPE" in
@@ -361,6 +384,7 @@ remote_info() {
 		;;
 		1)
 			echo "ERROR: Remote host appears to be running Windows"
+			windows_info
 			exit
 		;;
 		*)
