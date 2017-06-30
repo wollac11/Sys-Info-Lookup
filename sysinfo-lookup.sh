@@ -394,7 +394,7 @@ sys_info() {
 
 # Checks remote host connectivity and OS family (Windows / Unix)
 check_target() {
-	echo "Checking connectivity to remote machine..."
+	echo "Checking connectivity ${host}..."
 	if ping -c 1 ${host} &> /dev/null
 	then
 		echo "Connection Success!"
