@@ -301,6 +301,9 @@ windows_info() {
 	# Build array of computer info
 	IFS='|' read -r -a comp_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
 
+	# Get Serial no.
+	serial_no=$(~/node_modules/wmi-client/bin/wmic_ubuntu_x64 -A winauthfile -U ${user} --password=${pass} //${host} "SELECT SerialNumber from Win32_Bios" | tail -1 | awk -F\| '{print $2}')
+
 	# Check if any users logged in
 	if [ ! ${comp_sys_info[4]} == "(null)" ]; then
 			pc_users="${comp_sys_info[4]}"
@@ -311,6 +314,7 @@ windows_info() {
 	# Output results
 	echo "Manufacturer: ${comp_sys_info[0]}
 	Model: ${comp_sys_info[1]}
+	Serial: ${serial_no}
 	Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB
 	Users Logged In: ${pc_users}"
 }
