@@ -299,6 +299,7 @@ windows_info() {
 	echo
 
 	# Build arrays of computer info
+	IFS='|' read -r -a os_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT FreePhysicalMemory,Name,InstallDate,LastBootUpTime,LocalDateTime,Version FROM Win32_OperatingSystem" | tail -1)
 	IFS='|' read -r -a comp_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
 	IFS='|' read -r -a cpu_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Name,NumberOfLogicalProcessors from Win32_Processor" | tail -1)
 
@@ -316,6 +317,8 @@ windows_info() {
 	echo "Manufacturer: ${comp_sys_info[0]}"
 	echo "Model: ${comp_sys_info[1]}"
 	echo "Serial: ${serial_no}"
+	echo "OS: ${os_sys_info[4]}"
+	echo "Kernel: NT ${os_sys_info[7]}"
 	echo "CPU: ${cpu_info[1]} x ${cpu_info[2]}"
 	echo "Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB"
 	echo "Users Logged In: ${pc_users}"
