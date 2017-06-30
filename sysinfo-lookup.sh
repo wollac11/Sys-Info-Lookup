@@ -298,8 +298,10 @@ windows_info() {
 	read -s -r -p "Password for ${host}: " pass
 	echo
 
-	# Build array of computer info
+	# Build arrays of computer info
 	IFS='|' read -r -a comp_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
+	IFS='|' read -r -a cpu_info <<< $(~/node_modules/wmi-client/bin/wmic_ubuntu_x64 -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Name,NumberOfLogicalProcessors from Win32_Processor" | tail -1)
+
 
 	# Get Serial no.
 	serial_no=$(~/node_modules/wmi-client/bin/wmic_ubuntu_x64 -A winauthfile -U ${user} --password=${pass} //${host} "SELECT SerialNumber from Win32_Bios" | tail -1 | awk -F\| '{print $2}')
@@ -315,6 +317,7 @@ windows_info() {
 	echo "Manufacturer: ${comp_sys_info[0]}"
 	echo "Model: ${comp_sys_info[1]}"
 	echo "Serial: ${serial_no}"
+	echo "CPU: ${cpu_info[1]} x ${cpu_info[2]}"
 	echo "Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB"
 	echo "Users Logged In: ${pc_users}"
 }
