@@ -430,7 +430,7 @@ remote_info() {
 			typeset -f | ssh -To StrictHostKeyChecking=no "${user}@${host}" "$(cat);sys_info"
 		;;
 		1)
-			echo "WARNING: Remote host appears to be running Windows"
+			echo "WARNING: ${host} appears to be running Windows"
 			echo "Windows support is EXPERIMENTAL!"
 			wmi_check # Check requisite WMI-client is present
 			windows_info
