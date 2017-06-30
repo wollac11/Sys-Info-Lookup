@@ -300,11 +300,10 @@ windows_info() {
 
 	# Build arrays of computer info
 	IFS='|' read -r -a comp_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
-	IFS='|' read -r -a cpu_info <<< $(~/node_modules/wmi-client/bin/wmic_ubuntu_x64 -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Name,NumberOfLogicalProcessors from Win32_Processor" | tail -1)
-
+	IFS='|' read -r -a cpu_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Name,NumberOfLogicalProcessors from Win32_Processor" | tail -1)
 
 	# Get Serial no.
-	serial_no=$(~/node_modules/wmi-client/bin/wmic_ubuntu_x64 -A winauthfile -U ${user} --password=${pass} //${host} "SELECT SerialNumber from Win32_Bios" | tail -1 | awk -F\| '{print $2}')
+	serial_no=$(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT SerialNumber from Win32_Bios" | tail -1 | awk -F\| '{print $2}')
 
 	# Check if any users logged in
 	if [ ! ${comp_sys_info[4]} == "(null)" ]; then
