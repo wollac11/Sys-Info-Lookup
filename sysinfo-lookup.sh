@@ -310,6 +310,13 @@ windows_info() {
 	# Get free disk space
 	disk_free=$(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT FreeSpace from Win32_LogicalDisk" | grep "C:" | awk -F\| '{print $2}')
 
+	# Check SMART Status
+	if [ ${disk_drive_info[3]} == "OK" ]; then
+		smart_stat="PASSED"
+	else
+		smart_stat="FAILING"
+	fi
+
 	# Check if any users logged in
 	if [ ! ${comp_sys_info[4]} == "(null)" ]; then
 			pc_users="${comp_sys_info[4]}"
@@ -328,6 +335,7 @@ windows_info() {
 	echo "Disk Model: ${disk_drive_info[1]}"
 	echo "Disk Size: $(( disk_drive_info[2] / 1000000000 )) GB"
 	echo "Disk Free: $(round ""${disk_free}"/1073741824" "0" ) GB"
+	echo "SMART Status: ${smart_stat}"
 	echo "Users Logged In: ${pc_users}"
 }
 
