@@ -19,7 +19,7 @@ print_help() {
     echo "-h | --help               	: See this options list"
     echo "-a | --about              	: View version info"
     echo "-u | --user           		: Specifiy username for remote machine"
-    echo "-L | --log [file]        		: Log results to file"
+    echo "-L | --log [file]         	: Log results to file"
     echo "-s | --serial [serial no.]	: Lookup model from Apple serial"
     echo "-d | --ondevice           	: Get system info for current machine"
     echo "-r | --remote [host]  	 	: Get system info for remote machine"
