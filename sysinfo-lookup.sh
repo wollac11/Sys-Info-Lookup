@@ -535,6 +535,14 @@ do
         ;;
         -L|--log)
 			log=$2
+			
+			# Check if log file exists with this name
+			if [ -f $log ]; then
+					echo "Log file "${log}" already exists!"
+					echo "Exiting log file will be OVERWRITTEN."
+					rm -f ${log} # Remove old log
+			fi
+
 			shift # past argument
         ;;
         -u|--user)
