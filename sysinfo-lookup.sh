@@ -227,9 +227,8 @@ mac_info() {
 	# Output system kernel version
 	echo "Kernel: $(uname -mrs)"
 
-	# Output CPU model	
-	echo -n "CPU: "
-	sysctl -n machdep.cpu.brand_string
+	# Output CPU model & logical core count
+	echo "CPU: $(sysctl -n machdep.cpu.brand_string) x $(sysctl -n hw.ncpu)" 
 
 	# Calculate 'free' memory
 	free_blocks=$(vm_stat | grep free | awk '{ print $3 }' | sed 's/\.//')
