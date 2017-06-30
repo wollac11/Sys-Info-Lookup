@@ -533,16 +533,20 @@ do
 			sys_info
         ;;
         -L|--log)
-			log=$2
-			
-			# Check if log file exists with this name
-			if [ -f $log ]; then
-					echo "Log file "${log}" already exists!"
-					echo "Exiting log file will be OVERWRITTEN."
-					rm -f ${log} # Remove old log
+			if [[ ! "$2" ]] || [[ "$2" == -* ]]; then				
+				echo "No log file specified!"
+				echo "No log will be recorded."
+			else
+				log=$2
+				# Check if log file exists with this name
+				if [ -f $log ]; then
+						echo "Log file "${log}" already exists!"
+						echo "Exiting log file will be OVERWRITTEN."
+						rm -f ${log} # Remove old log
+				fi
+				shift # past argument
 			fi
-
-			shift # past argument
+			echo
         ;;
         -u|--user)
 			user=$2
