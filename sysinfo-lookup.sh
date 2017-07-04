@@ -401,7 +401,7 @@ windows_info() {
                 # If not first AV program, add space before output
                 if ! $fst_av ; then echo -n "           " ; fi
                 # Print AV status description
-                echo "${av_soft[$((i-2))]} is ${rtstatus} and ${defstatus}"
+                echo "${av_soft[$((i-2))]} is ${rtstatus} & ${defstatus}"
                 # Record an AV has been proccessed (subsequent are not the first)
                 local fst_av=false
         fi
