@@ -347,7 +347,7 @@ windows_info() {
 	do
 		# Split properties into seperate array items
 		IFS='|' read -r -a av_status <<< $(echo "$i")
-		Combine to single array
+		# Combine to single array
 		av_soft+=( "${av_status[@]}" )
 	done
 
