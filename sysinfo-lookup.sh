@@ -75,8 +75,8 @@ wmi_check () {
 				chmod +x "${wmic_bin}" && echo
 		    ;;
 		    *)
-				echo "Unable to procceed! Exiting..."
-		    	exit
+				echo "Unable to procceed!"
+				return 2
 		    ;;
 		esac
 	fi
@@ -467,8 +467,7 @@ sys_info() {
 					linux_info
 			    ;;
 			    *)
-					echo "Exiting..."
-			    	exit
+					echo "Skipping..."
 			    ;;
 			esac
 		;;
@@ -524,16 +523,17 @@ remote_info() {
 			if [ $? == "0" ]; then
 				echo "Windows support is EXPERIMENTAL!"
 				wmi_check # Check requisite WMI-client is present
+				if [ ! $? == "2" ]; then # Continue if WMI-client check passed
+					# Get password for Windows target
+					echo && read -s -r -p "Password for ${host}: " pass && echo
 
-				# Get password for Windows target
-				echo && read -s -r -p "Password for ${host}: " pass && echo
-
-				if [ ${log} ]; then		# Check if log set
-					# Run Windows sys info function, redirect copy to log
-					windows_info 2>&1 | tee -a ${log}
-				else
-					# Run Windows sys info function, no log
-					windows_info
+					if [ ${log} ]; then		# Check if log set
+						# Run Windows sys info function, redirect copy to log
+						windows_info 2>&1 | tee -a ${log}
+					else
+						# Run Windows sys info function, no log
+						windows_info
+					fi
 				fi
 			else
 				echo "Currently Windows clients can only be checked from Linux hosts"
@@ -541,7 +541,6 @@ remote_info() {
 		;;
 		*)
 			echo "Connection to ${host} Failed!"
-			exit
 		;;
 	esac
 }
