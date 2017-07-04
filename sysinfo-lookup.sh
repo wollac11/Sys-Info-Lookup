@@ -598,7 +598,13 @@ do
         ;;
         -l|--local)
 			interactive=false
-			sys_info
+			if [ ${log} ]; then		# Check if log set
+				# Run system info check locally, redirect copy to log
+				sys_info 2>&1 | tee -a ${log}
+			else
+				# Run system info check locally, no log
+				sys_info
+			fi
         ;;
         -L|--log)
 			if [[ ! "$2" ]] || [[ "$2" == -* ]]; then				
