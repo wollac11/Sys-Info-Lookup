@@ -518,19 +518,25 @@ remote_info() {
 			fi
 		;;
 		1)
-			echo "WARNING: ${host} appears to be running Windows"
-			echo "Windows support is EXPERIMENTAL!"
-			wmi_check # Check requisite WMI-client is present
+			# Check we running on Linux
+			check_unix
+			if [ $? == "0" ]; then
+				echo "WARNING: ${host} appears to be running Windows"
+				echo "Windows support is EXPERIMENTAL!"
+				wmi_check # Check requisite WMI-client is present
 
-			# Get password for Windows target
-			echo && read -s -r -p "Password for ${host}: " pass && echo
+				# Get password for Windows target
+				echo && read -s -r -p "Password for ${host}: " pass && echo
 
-			if [ ${log} ]; then		# Check if log set
-				# Run Windows sys info function, redirect copy to log
-				windows_info 2>&1 | tee -a ${log}
+				if [ ${log} ]; then		# Check if log set
+					# Run Windows sys info function, redirect copy to log
+					windows_info 2>&1 | tee -a ${log}
+				else
+					# Run Windows sys info function, no log
+					windows_info
+				fi
 			else
-				# Run Windows sys info function, no log
-				windows_info
+				echo "ERROR: Currently Windows clients can only be checked from Linux hosts"
 			fi
 		;;
 		*)
