@@ -482,7 +482,7 @@ check_target() {
 	then
 		echo "Connection Success!"
 		# Detect OS family by TTL
-		tcp_ttl=$(ping -c 1 ${host} 2> /dev/null | grep "bytes from" | awk '{print $7}')
+		tcp_ttl=$(ping -c 1 ${host} 2> /dev/null | grep "bytes from" | awk '{print $(NF-2)}')
 		if (("${tcp_ttl//[!0-9.]/}" >= 117 && "${tcp_ttl//[!0-9.]/}" <= 137)); then
 			# Windows-based system
 			return 1 
