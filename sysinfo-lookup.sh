@@ -253,8 +253,9 @@ mac_info() {
 	echo "CPU: $(sysctl -n machdep.cpu.brand_string) x $(sysctl -n hw.ncpu)" 
 
 	# Output GPU Model
-	echo -n "GPU: "
-	system_profiler SPDisplaysDataType | grep -m 1 Model | awk '{ for( i=3 ; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }'
+	gpu=$(system_profiler SPDisplaysDataType | grep -m 1 Model | awk '{ for( i=3 ; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }')
+	vram=$(system_profiler SPDisplaysDataType | grep VRAM | awk '{print $3, $4}')
+	echo "GPU: ${gpu} (${vram})"
 
 	# Calculate 'free' memory
 	free_blocks=$(vm_stat | grep free | awk '{ print $3 }' | sed 's/\.//')
