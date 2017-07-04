@@ -82,6 +82,28 @@ wmi_check () {
 	fi
 }
 
+# Checks windows security status codes
+check_win_security() {
+	case $1 in
+		# Windows Defender
+		"393472") defstatus="Up to date" && rtstatus="Disabled" ;;
+		"397584") defstatus="Out of date" && rtstatus="Enabled" ;;
+		"397568") defstatus="Up to date" && rtstatus="Enabled" ;;
+		# Other AV software
+		"262144") defstatus="Up to date" && rtstatus="Disabled" ;;
+		"266240") defstatus="Up to date" && rtstatus="Enabled" ;;
+		"262160") defstatus="Out of date" && rtstatus="Disabled" ;;
+		"266256") defstatus="Out of date" && rtstatus="Enabled" ;;
+		"393216") defstatus="Up to date" && rtstatus="Disabled" ;;
+		"393232") defstatus="Out of date" && rtstatus="Disabled" ;;
+		"393488") defstatus="Out of date" && rtstatus="Disabled" ;;
+		"397312") defstatus="Up to date" && rtstatus="Enabled" ;;
+		"397328") defstatus="Out of date" && rtstatus="Enabled" ;;
+		# Unknown status code
+		*) defstatus="Unknown" && rtstatus="Unknown" ;;
+	esac
+}
+
 # Gets system info about Linux & other non-Apple Unix systems
 linux_info() {
 	echo && echo "-- $(hostname): --" | tr /a-z/ /A-Z/
@@ -315,6 +337,20 @@ windows_info() {
 	# Get free disk space
 	disk_free=$(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT FreeSpace from Win32_LogicalDisk" | grep "C:" | awk -F\| '{print $2}')
 
+	# Get status for each AV program into an array
+	while IFS= read -r line ; do
+	    av_info+=("${line}")
+	done < <(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} --namespace='root\SecurityCenter2' "SELECT displayName,productState FROM AntiVirusProduct" | tail -n +3)
+
+	# Iterate through each AV program
+	for i in "${av_info[@]}"
+	do
+		# Split properties into seperate array items
+		IFS='|' read -r -a av_status <<< $(echo "$i")
+		Combine to single array
+		av_soft+=( "${av_status[@]}" )
+	done
+
 	# Check SMART Status
 	if [ ${disk_drive_info[3]} == "OK" ]; then
 		smart_stat="PASSED"
@@ -354,11 +390,30 @@ windows_info() {
 	echo "Disk Size: $(( disk_drive_info[2] / 1000000000 )) GB"
 	echo "Disk Free: $(round ""${disk_free}"/1073741824" "0" ) GB"
 	echo "SMART Status: ${smart_stat}"
+	# Start checking AV status
+	echo -n "AV Status: "
+	# Interate through every installed AV program
+	for i in ${!av_soft[@]}; do
+		# Procceed for every third data item (AV status)
+    	 if (( $(($((i+1)) % 3 )) == 0 )); then
+				# Check AV status value
+                check_win_security "${av_soft[${i}]}"
+                # If not first AV program, add space before output
+                if ! $fst_av ; then echo -n "           " ; fi
+                # Print AV status description
+                echo "${av_soft[$((i-2))]} is ${rtstatus} and ${defstatus}"
+                # Record an AV has been proccessed (subsequent are not the first)
+                local fst_av=false
+        fi
+	done
 	echo "System Installed: ${sys_installed}"
 	echo "Uptime: $(display_time "${sys_up}")"
 	echo "Users Logged In: ${pc_users}"
 	echo "------------" && echo
 
+	# Clear AV lists
+	unset av_info
+	unset av_soft
 }
 
 # Checks which Unix varient we are running on
