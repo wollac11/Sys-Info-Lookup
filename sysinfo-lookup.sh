@@ -518,10 +518,10 @@ remote_info() {
 			fi
 		;;
 		1)
+			echo "WARNING: ${host} appears to be running Windows"
 			# Check we running on Linux
 			check_unix
 			if [ $? == "0" ]; then
-				echo "WARNING: ${host} appears to be running Windows"
 				echo "Windows support is EXPERIMENTAL!"
 				wmi_check # Check requisite WMI-client is present
 
@@ -536,7 +536,7 @@ remote_info() {
 					windows_info
 				fi
 			else
-				echo "ERROR: Currently Windows clients can only be checked from Linux hosts"
+				echo "Currently Windows clients can only be checked from Linux hosts"
 			fi
 		;;
 		*)
