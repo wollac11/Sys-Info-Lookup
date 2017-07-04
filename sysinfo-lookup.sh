@@ -390,7 +390,7 @@ windows_info() {
 	echo "OS: ${os_sys_info[4]}"
 	echo "Kernel: NT ${os_sys_info[7]}"
 	echo "CPU: ${cpu_info[1]} x ${cpu_info[2]}"
-	echo "GPU: ${video_card_info[2]} ($((video_card_info[0] / 1073741824)) GB)"
+	echo "GPU: ${video_card_info[2]} ($((video_card_info[0] / 1048576)) MB)"
 	echo "Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB"
 	echo "Mem Free: $(( os_sys_info[0] / 1000 )) MB"
 	echo "Disk Model: ${disk_drive_info[1]}"
