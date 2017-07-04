@@ -252,6 +252,10 @@ mac_info() {
 	# Output CPU model & logical core count
 	echo "CPU: $(sysctl -n machdep.cpu.brand_string) x $(sysctl -n hw.ncpu)" 
 
+	# Output GPU Model
+	echo -n "GPU: "
+	system_profiler SPDisplaysDataType | grep -m 1 Model | awk '{ for( i=3 ; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }'
+
 	# Calculate 'free' memory
 	free_blocks=$(vm_stat | grep free | awk '{ print $3 }' | sed 's/\.//')
 	speculative_blocks=$(vm_stat | grep speculative | awk '{ print $3 }' | sed 's/\.//')
