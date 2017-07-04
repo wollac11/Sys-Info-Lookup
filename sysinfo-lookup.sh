@@ -254,7 +254,7 @@ mac_info() {
 
 	# Output GPU Model
 	gpu=$(system_profiler SPDisplaysDataType | grep -m 1 Model | awk '{ for( i=3 ; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }')
-	vram=$(system_profiler SPDisplaysDataType | grep VRAM | awk '{print $3, $4}')
+	vram=$(system_profiler SPDisplaysDataType | grep -m 1 VRAM | awk '{print $3, $4}')
 	echo "GPU: ${gpu} (${vram})"
 
 	# Calculate 'free' memory
