@@ -330,6 +330,7 @@ windows_info() {
 	IFS='|' read -r -a comp_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
 	IFS='|' read -r -a cpu_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Name,NumberOfLogicalProcessors from Win32_Processor" | tail -1)
 	IFS='|' read -r -a disk_drive_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Status,Model,Size FROM Win32_DiskDrive" | tail -1)
+	IFS='|' read -r -a video_card_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Name,AdapterRAM from Win32_VideoController" | tail -1)
 
 	# Get Serial no.
 	serial_no=$(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT SerialNumber from Win32_Bios" | tail -1 | awk -F\| '{print $2}')
@@ -385,6 +386,7 @@ windows_info() {
 	echo "Kernel: NT ${os_sys_info[7]}"
 	echo "CPU: ${cpu_info[1]} x ${cpu_info[2]}"
 	echo "Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB"
+	echo "GPU: ${video_card_info[2]} ($((video_card_info[0] / 1073741824)) GB)"
 	echo "Mem Free: $(( os_sys_info[0] / 1000 )) MB"
 	echo "Disk Model: ${disk_drive_info[1]}"
 	echo "Disk Size: $(( disk_drive_info[2] / 1000000000 )) GB"
