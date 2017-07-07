@@ -651,7 +651,8 @@ do
         -s|--serial)
 			serial=$2
 			interactive=false
-			if [ ! "${serial}" ]; then
+			# Check serial number has been specified
+			if [[ ! "${serial}" ]] || [[ "$2" == -* ]]; then
 				echo "No serial entered!"
 				req_serial
 			fi
@@ -661,7 +662,8 @@ do
         -r|--remote)
 			host=$2
 			interactive=false
-			if [ ! "${host}" ]; then
+			# Check hostname has been specified
+			if [[ ! "${host}" ]] || [[ "$2" == -* ]]; then
 				echo "No host entered!"
 			fi
 			remote_info "${host}"
