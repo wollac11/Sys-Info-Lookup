@@ -148,6 +148,10 @@ linux_info() {
 	cpu_count=$(cat /proc/cpuinfo | grep processor | wc -l)
 	echo "CPU: ${cpu_model}x ${cpu_count}"
 
+	# Output GPU Model
+	echo -n "GPU: "
+	lspci | grep -i 'vga\|3d\|2d' | awk '{ for( i=5 ; i <=NF-2 ; i++ ) { printf( "%s ", $i ) } ; print "" }'
+
 	# Calculate total memory
 	total_mem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 	if [ "${total_mem}" -ge "2000000" ]; then
@@ -606,6 +610,7 @@ do
 			fi
         ;;
         -L|--log)
+			# Check log filename given 
 			if [[ ! "$2" ]] || [[ "$2" == -* ]]; then				
 				echo "No log file specified!"
 				echo "No log will be recorded."
