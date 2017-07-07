@@ -8,7 +8,7 @@ wmic_bin=./DEPENDS/wmic_ubuntu_x64	# Location of WMIC-Client binary
 print_info() {
 	echo "-----------------------
 ----SYS INFO LOOKUP----
-------Version 1.2b-----
+-----Version 1.2b2-----
 --Charlie Callow 2017--
 -----------------------
 "
