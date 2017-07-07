@@ -14,9 +14,11 @@ Download and run script from BASH shell. Script can be used interactively or by 
 
 	-h | --help               	: See this options list  
 	-a | --about              	: View version info  
-	-u | --user           		: Specifiy username for remote machine  
+	-u | --user [username]    	: Specify username for remote machine  
+	-p | --password [password]	: Specify password for remote machine  
+	-L | --log [file]         	: Log results to file  
 	-s | --serial [serial no.]	: Lookup model from Apple serial  
-	-d | --ondevice           	: Get system info for current machine  
+	-l | --local              	: Get system info for current machine  
 	-r | --remote [host]  	 	: Get system info for remote machine  
 
 **System Requirements:**
