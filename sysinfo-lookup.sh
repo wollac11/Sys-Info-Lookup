@@ -529,7 +529,9 @@ remote_info() {
 				wmi_check # Check requisite WMI-client is present
 				if [ ! $? == "2" ]; then # Continue if WMI-client check passed
 					# Get password for Windows target
-					echo && read -s -r -p "Password for ${host}: " pass && echo
+                    if [[ ! ${pass} ]]; then # If no password defined
+						echo && read -s -r -p "Password for ${host}: " pass && echo
+					fi
 
 					if [ ${log} ]; then		# Check if log set
 						# Run Windows sys info function, redirect copy to log
