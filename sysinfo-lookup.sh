@@ -19,6 +19,7 @@ print_help() {
     echo "-h | --help               	: See this options list"
     echo "-a | --about              	: View version info"
     echo "-u | --user           		: Specifiy username for remote machine"
+	echo "-p | --password [password]	: Specifiy password for remote machine"
     echo "-L | --log [file]         	: Log results to file"
     echo "-s | --serial [serial no.]	: Lookup model from Apple serial"
     echo "-d | --ondevice           	: Get system info for current machine"
@@ -630,6 +631,10 @@ do
         ;;
         -u|--user)
 			user=$2
+			shift # past argument
+		;;
+		-p|--password)
+			pass=$2
 			shift # past argument
 		;;
         -s|--serial)
