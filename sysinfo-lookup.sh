@@ -18,7 +18,7 @@ print_info() {
 print_help() {
     echo "-h | --help               	: See this options list"
     echo "-a | --about              	: View version info"
-    echo "-u | --user           		: Specifiy username for remote machine"
+    echo "-u | --user [username]    	: Specifiy username for remote machine"
 	echo "-p | --password [password]	: Specifiy password for remote machine"
     echo "-L | --log [file]         	: Log results to file"
     echo "-s | --serial [serial no.]	: Lookup model from Apple serial"
