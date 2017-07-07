@@ -1,0 +1,2 @@
+# Uncomment below and add domain name to use Active directory user for authentication with Windows hosts
+#domain=
