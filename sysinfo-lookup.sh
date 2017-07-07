@@ -514,10 +514,10 @@ remote_info() {
 		0)
 			if [ ${log} ]; then		# Check if log set
 				# Run system info function on remote target, redirect copy to log
-				ssh -To StrictHostKeyChecking=no "${user}@${host}" "$(typeset -f); sys_info" 2>&1 | tee -a ${log}
+				ssh -To StrictHostKeyChecking=no -l "${user}" "${host}"  "$(typeset -f); sys_info" 2>&1 | tee -a ${log}
 			else
 				# Run system info function on remote target, no log
-				ssh -To StrictHostKeyChecking=no "${user}@${host}" "$(typeset -f); sys_info"
+				ssh -To StrictHostKeyChecking=no -l "${user}" "${host}"  "$(typeset -f); sys_info"
 			fi
 		;;
 		1)
