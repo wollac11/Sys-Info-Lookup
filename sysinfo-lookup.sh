@@ -630,12 +630,23 @@ do
 			echo
         ;;
         -u|--user)
+		# Check user has been specified
+		if [[ ! "$2" ]] || [[ "$2" == -* ]]; then
+			echo "No user specified, using default (${user})."
+		else
 			user=$2
 			shift # past argument
+		fi
 		;;
 		-p|--password)
+		# Check password has been specified
+		if [[ ! "$2" ]] || [[ "$2" == -* ]]; then
+			echo "No password specified."
+			echo "You will be prompted to enter one if/when required."
+		else
 			pass=$2
 			shift # past argument
+		fi
 		;;
         -s|--serial)
 			serial=$2
