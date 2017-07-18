@@ -487,22 +487,29 @@ sys_info() {
 
 # Checks remote host connectivity and OS family (Windows / Unix)
 check_target() {
-	echo "Checking connectivity to ${host}..."
-	if ping -c 1 ${host} &> /dev/null
-	then
-		echo "Connection Success!"
-		# Detect OS family by TTL
-		tcp_ttl=$(ping -c 1 ${host} 2> /dev/null | grep "bytes from" | awk '{print $(NF-2)}')
-		if (("${tcp_ttl//[!0-9.]/}" >= 117 && "${tcp_ttl//[!0-9.]/}" <= 137)); then
-			# Windows-based system
-			return 1 
+	# Check host set
+	if [[ "${host}" ]]; then
+		# Host set, check connection
+		echo "Checking connectivity to ${host}..."
+		if ping -c 1 ${host} &> /dev/null
+		then
+			echo "Connection Success!"
+			# Detect OS family by TTL
+			tcp_ttl=$(ping -c 1 ${host} 2> /dev/null | grep "bytes from" | awk '{print $(NF-2)}')
+			if (("${tcp_ttl//[!0-9.]/}" >= 117 && "${tcp_ttl//[!0-9.]/}" <= 137)); then
+				# Windows-based system
+				return 1 
+			else
+				# Unix-based system 
+				return 0
+			fi
 		else
-			# Unix-based system 
-			return 0
+			# No connection
+			return 2
 		fi
 	else
-		# No connection
-		return 2
+		# No host given
+		return 3
 	fi
 }
 
@@ -551,6 +558,10 @@ remote_info() {
 			else
 				echo "Currently Windows clients can only be checked from Linux hosts"
 			fi
+		;;
+		3)
+			# No hostname given
+			echo "Cannot continue without a specified target."
 		;;
 		*)
 			echo "Connection to ${host} Failed!"
