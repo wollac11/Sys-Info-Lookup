@@ -150,8 +150,14 @@ linux_info() {
 	echo "CPU: ${cpu_model}x ${cpu_count}"
 
 	# Output GPU Model
-	echo -n "GPU: "
-	lspci | grep -i 'vga\|3d\|2d' | awk '{ for( i=5 ; i <=NF-2 ; i++ ) { printf( "%s ", $i ) } ; print "" }'
+	gpu_model=$(lspci | grep -i 'vga\|3d\|2d' | awk '{ for( i=5 ; i <=NF-2 ; i++ ) { printf( "%s ", $i ) } ; print "" }')
+	vram=$(($(grep -P -o -i "(?<=memory:).*(?=kbytes)" /var/log/Xorg.0.log)))
+	echo -n "GPU: ${gpu_model}"
+    if [ ! $vram == "0" ]; then
+		echo "($((vram / 1024)) MB)"
+	else
+		echo
+	fi
 
 	# Calculate total memory
 	total_mem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
