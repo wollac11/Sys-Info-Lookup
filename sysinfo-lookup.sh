@@ -513,6 +513,20 @@ check_target() {
 	fi
 }
 
+# Gets remote info over ssh
+info_ssh() {
+	if [ ${pass} ]; then
+		# Check for sshpass
+		if hash sshpass 2>/dev/null; then
+	    	sshpass -p ${pass} ssh -To StrictHostKeyChecking=no -l "${user}" "${host}"  "$(typeset -f); sys_info"        
+	    else
+	    	echo "ERROR: 'sshpass' required to supply unix password non-interactively but not installed."
+	    fi
+	 else
+		ssh -To StrictHostKeyChecking=no -l "${user}" "${host}"  "$(typeset -f); sys_info"
+	fi
+}
+
 # Get system info for a remote machine
 remote_info() {
 	if [[ $1 ]]; then
@@ -528,10 +542,10 @@ remote_info() {
 		0)
 			if [ ${log} ]; then		# Check if log set
 				# Run system info function on remote target, redirect copy to log
-				ssh -To StrictHostKeyChecking=no -l "${user}" "${host}"  "$(typeset -f); sys_info" 2>&1 | tee -a ${log}
+				info_ssh 2>&1 | tee -a ${log}
 			else
 				# Run system info function on remote target, no log
-				ssh -To StrictHostKeyChecking=no -l "${user}" "${host}"  "$(typeset -f); sys_info"
+				info_ssh
 			fi
 		;;
 		1)
