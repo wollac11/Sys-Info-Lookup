@@ -518,11 +518,11 @@ info_ssh() {
 	if [ ${pass} ]; then
 		# Check for sshpass
 		if hash sshpass 2>/dev/null; then
-	    	sshpass -p ${pass} ssh -To StrictHostKeyChecking=no -l "${user}" "${host}"  "$(typeset -f); sys_info"        
-	    else
-	    	echo "ERROR: 'sshpass' required to supply unix password non-interactively but not installed."
-	    fi
-	 else
+			sshpass -p ${pass} ssh -To StrictHostKeyChecking=no -l "${user}" "${host}"  "$(typeset -f); sys_info"
+		else
+			echo "ERROR: 'sshpass' required to supply unix password non-interactively but not installed."
+		fi
+	else
 		ssh -To StrictHostKeyChecking=no -l "${user}" "${host}"  "$(typeset -f); sys_info"
 	fi
 }
