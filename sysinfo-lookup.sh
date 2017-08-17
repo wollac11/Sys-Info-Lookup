@@ -509,7 +509,7 @@ windows_info() {
 			# Check AV status value
 			check_win_security "${av_soft[${i}]}"
 			# If not first AV program, add space before output
-			if ! $fst_av ; then echo -n " E::::::::zt33L @EEEtttt::::z3F                    " ; fi
+			if ! $fst_av ; then echo -n "it:::::tt333EEF @EEEEEEttttt33F                    " ; fi
 			if $fst_av ; then echo -n " E::::::::zt33L @EEEtttt::::z3F        	AV Status: " ; fi
 			# Print AV status description
 			echo "${av_soft[$((i-2))]} is ${rtstatus} & ${defstatus}"
