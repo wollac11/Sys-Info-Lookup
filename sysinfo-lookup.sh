@@ -230,11 +230,13 @@ linux_info() {
 	echo -n "Disk Type: "
 	hdd_bool=$(cat /sys/block/sda/queue/rotational)
 	if [ $hdd_bool == "1" ]; then
-		echo "Rotational"
+		echo -n "Rotational"
 		hdd_rpm=$(sudo hdparm -I /dev/sda | grep Rotation | awk '{print $5}')
 		# If drive is a rotational disk, output its RPM
 		if [[ "${hdd_rpm}" ]]; then 
-			echo "Disk Rotation Speed: ${hdd_rpm} RPM" 
+			echo " (${hdd_rpm} RPM)"
+		else
+			echo
 		fi
 	else
 		echo "Solid State"
