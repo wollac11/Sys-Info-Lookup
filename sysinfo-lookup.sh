@@ -111,7 +111,11 @@ linux_info() {
 	# Try sudo
 	sudo echo &> /dev/null
 
-	# Get system manufacturer
+	echo "
+         .888888:."
+    echo -n "         88888.888.            	"
+
+    # Get system manufacturer
 	vendor=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
 	# Fallback to motherboard manufacturer if product manufacturer unavailable
 	if [[ $vendor = *[!\ ]* ]]; then
@@ -119,6 +123,8 @@ linux_info() {
 	else
 		echo "MB Manufacturer: $(cat /sys/devices/virtual/dmi/id/board_vendor)"
 	fi 
+
+	echo -n "        .8888888888        	"
 
 	# Get system product name
 	product=$(cat /sys/devices/virtual/dmi/id/product_name)
@@ -129,6 +135,8 @@ linux_info() {
 		echo "MB Model: $(cat /sys/devices/virtual/dmi/id/board_name)" 
 	fi
 
+	echo -n "        8' \`88' \`888       	"
+
 	# Get system serial
 	serial=$(sudo cat /sys/devices/virtual/dmi/id/product_serial)
 	# Fallback to motherboard serial if product serial unavailable
@@ -138,26 +146,36 @@ linux_info() {
 		echo "MB Serial: $(sudo cat /sys/devices/virtual/dmi/id/board_serial)" 
 	fi
 
+	echo -n "        8 8 88 8 888       	"
+
 	# Output OS distrubtion name & version
 	echo "OS: $(lsb_release -a 2>/dev/null | grep "Description" | awk '{ for( i=2 ; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }')"
-	
+
+	echo -n "        8:.,::,.:888       	"
+
 	# Output system kernel version
 	echo "Kernel: $(uname -mrs)"
+
+	echo -n "       .8\`::::::'888       	"
 
 	# Output CPU model and core/thread count
 	cpu_model=$(grep -m 1 "model name" /proc/cpuinfo |  awk '{ for( i=4 ; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }')
 	cpu_count=$(cat /proc/cpuinfo | grep processor | wc -l)
 	echo "CPU: ${cpu_model}x ${cpu_count}"
 
+	echo -n "       88  \`::'  888       	"
+
 	# Output GPU Model
 	gpu_model=$(lspci | grep -i 'vga\|3d\|2d' | awk '{ for( i=5 ; i <=NF-2 ; i++ ) { printf( "%s ", $i ) } ; print "" }')
 	vram=$(($(grep -P -o -i "(?<=memory:).*(?=kbytes)" /var/log/Xorg.0.log)))
 	echo -n "GPU: ${gpu_model}"
-    if [ ! $vram == "0" ]; then
+	if [ ! $vram == "0" ]; then
 		echo "($((vram / 1024)) MB)"
 	else
 		echo
 	fi
+
+	echo -n "      .88        \`888.       	"
 
 	# Calculate total memory
 	total_mem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
@@ -166,17 +184,25 @@ linux_info() {
 	else
 		total_mem=$(round ""$total_mem"/1000000" "1")
 	fi
+
 	# Calculate free memory
 	free_mem=$(vmstat -s | grep "free memory" | awk '{print $1}')
 	free_mem=$((free_mem/1024))
 	# Output system memory details
 	echo "Mem Total: ${total_mem} GB"
+
+	echo -n "    .88'   .::.  .:8888.       	"
+
 	echo "Mem Free: ${free_mem} MB"
+
+	echo -n "    888.'   :'    \`'88:88.  	"
 
 	# Output disk model
 	hdd_model=$(sudo smartctl -i /dev/sda | grep Family | awk '{ for( i=3; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }')
 	echo "Disk Model: ${hdd_model}"
-	
+
+	echo -n "  .8888'    '        88:88. 	"
+
 	# Calculate disk usage for common partitions
 	free_root=$(df -BG / | grep / | awk '{print $4}')
 	free_home=$(df -BG /home | grep / | awk '{print $4}')
@@ -186,13 +212,19 @@ linux_info() {
 	total_hdd=$((${total_hdd}/1000000000))
 	# Output disk stats
 	echo "Disk Size: ${total_hdd} GB"
+
+	echo -n " .8888'     .        88:888  	"
+
 	echo -n "Disk Free: ${free_root//[!0-9]/} GB ROOT, ${free_home//[!0-9]/} GB HOME"
+
 	# Output notification if no scratch partition found
 	if [ $free_scratch ]; then
 		echo ", ${free_scratch//[!0-9]/} GB SCRATCH"
 	else
 		echo "." && echo "           No scratch partition found."
 	fi
+
+	echo -n " \`88888     :        8:888'  	"
 
 	# Output type of storage medium in use for primary disk
 	echo -n "Disk Type: "
@@ -208,13 +240,19 @@ linux_info() {
 		echo "Solid State"
 	fi
 
+	echo -n "  \`.:.88    .       .::888'  	"
+
 	# Check drive S.M.A.R.T. Health
 	hdd_health=$(sudo smartctl -H /dev/sda | grep "overall-health" | awk '{print $6}')
 	echo "SMART Status: ${hdd_health}"
 
+	echo -n " .:::::88   \`      .:::::::.  	"
+
 	# Get system installation date
 	echo -n "System Installed: "
 	sudo tune2fs -l /dev/sda1 | grep created | awk '{print $5, $4, $7}'
+
+	echo -n ".::::::.8         .:::::::::  	"
 
 	# Calculate system uptime
 	seconds=$(cat /proc/uptime | awk '{print $1}')
@@ -223,6 +261,8 @@ linux_info() {
 	echo -n "Uptime: "
 	echo $((seconds/86400))" days,"\
      $(date -d "1970-01-01 + $seconds seconds" "+%H hours, %M minutes.")
+
+	echo -n ":::::::::..     .:::::::::'  	"
 
     # Get list of logged in users
     pc_users=$(users)
@@ -237,19 +277,34 @@ linux_info() {
 		echo "None"
 	fi
 
+	echo " \`:::::::::88888:::::::'
+      \`:::'       \`:'
+	"
+
 	echo "------------" && echo
 }
 
 mac_info() {
 	echo && echo "-- $(hostname): --" | tr /a-z/ /A-Z/
-	echo "Manufacturer: Apple Inc."
+
+	echo "
+                       .8
+                     .888
+                    .8888'
+                  .8888'              	Manufacturer: Apple Inc."
+	echo -n "                  888'              	"
 
 	# Obtain serial from system
 	serial=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
 	# Get model from serial
 	check_serial
+
+	echo -n "                  8'              	"
+
 	# Display serial
 	echo "Serial: ${serial}"
+
+	echo -n "      .88888888. .8888888888.    	"
 
 	# Output OS version from system
 	os_ver=$(sw_vers -productVersion)
@@ -257,16 +312,24 @@ mac_info() {
 	# Lookup & output marketing name for OS release
 	curl -s http://support-sp.apple.com/sp/product?edid=${os_ver} | awk -v FS="(<configCode>|</configCode>)" '{print $2}'
 	
+	echo -n "   .888888888888888888888888888. 	"
+
 	# Output system kernel version
 	echo "Kernel: $(uname -mrs)"
 
+	echo -n " .888888888888888888888888888888. 	"
+
 	# Output CPU model & logical core count
 	echo "CPU: $(sysctl -n machdep.cpu.brand_string) x $(sysctl -n hw.ncpu)" 
+
+	echo -n ".&&&&&&&&&&&&&&&&&&&&&&&&&&&&&' 	"
 
 	# Output GPU Model
 	gpu=$(system_profiler SPDisplaysDataType | grep -m 1 Model | awk '{ for( i=3 ; i <=NF ; i++ ) { printf( "%s ", $i ) } ; print "" }')
 	vram=$(system_profiler SPDisplaysDataType | grep -m 1 VRAM | awk '{print $3, $4}')
 	echo "GPU: ${gpu} (${vram})"
+
+	echo -n "&&&&&&&&&&&&&&&&&&&&&&&&&&&&'    	"
 
 	# Calculate 'free' memory
 	free_blocks=$(vm_stat | grep free | awk '{ print $3 }' | sed 's/\.//')
@@ -277,32 +340,49 @@ mac_info() {
 	total_mem=$(((${phys//[!0-9]/}/1073741824)))
 	# Output system memory details
 	echo "Mem Total: $total_mem GB"
+
+	echo -n "&&&&&&&&&&&&&&&&&&&&&&&&&&&'    	"
+
 	echo "Mem Free: $free_mem MB"
+
+	echo -n "@@@@@@@@@@@@@@@@@@@@@@@@@@:      	"
+
 
 	# Output disk model
 	hdd_model=$(diskutil info disk0 | grep "Media Name" | awk '{print $5}')
 	echo "Disk Model: ${hdd_model}"
+
+	echo -n "@@@@@@@@@@@@@@@@@@@@@@@@@@:      	"
 
 	# Calculate disk drive capacity & usage
 	total_hdd=$(diskutil info disk0 | grep "Disk Size" | awk '{print $3,$4}')
 	free_hdd=$(df -bg / | grep / | awk '{print $4}')
 	# Output disk drive stats
 	echo "Disk Size: ${total_hdd}"
+
+	echo -n "%%%%%%%%%%%%%%%%%%%%%%%%%%%.       	"
+
 	echo "Disk Free: ${free_hdd} GB"
+
+	echo -n "%%%%%%%%%%%%%%%%%%%%%%%%%%%%.       	"
 
 	# Output type of storage medium in use for primary disk
 	echo -n "Disk Type: "
 	hdd_bool=$(diskutil info disk0 | grep "Solid State" | awk '{print $3}')
 	if [ $hdd_bool == "No" ]; then
-		echo "Rotational"
+		echo -n "Rotational"
 		hdd_rpm=$(system_profiler SPSerialATADataType | grep "Rotational Rate" | awk '{print $3}')
 		# If drive is a rotational disk, output its RPM
 		if [[ "${hdd_rpm}" ]]; then 
-			echo "Disk Rotation Speed: ${hdd_rpm} RPM" 
+			echo " (${hdd_rpm} RPM)"
+		else
+			echo
 		fi
 	else
 		echo "Solid State"
 	fi
+
+	echo -n "\`%%%%%%%%%%%%%%%%%%%%%%%%%%%%%.      	"
 
 	# Check drive S.M.A.R.T. Health
 	hdd_health=$(diskutil info disk0 | grep "SMART Status:" | awk '{print $3}')
@@ -312,9 +392,13 @@ mac_info() {
 		echo "SMART Status: FAILING"
 	fi
 
+	echo -n " \`0000000000000000000000000000000'  	"
+
 	# Get system install date
 	echo -n "System Installed: "
 	ls -la /var/log/CDIS.custom | awk '{print $6, $7, $8}'
+
+	echo -n "  \`00000000000000000000000000000'   	"
 
 	# Calculate system uptime
 	boot_sec=$(sysctl -n kern.boottime | awk '{print $4}')
@@ -323,6 +407,8 @@ mac_info() {
 	# Output system uptime in hours, mins and days
 	echo -n "Uptime: "
 	display_time "${boottime}"
+
+	echo -n "   \`000000000000000000000000000'   	"
 
 	# Get list of current users & remove duplicates
 	pc_users=$(users | tr ' ' '\n' | sort | uniq | tr '\n' ' ' | sed -e 's/[[:space:]]*$//')
@@ -333,6 +419,12 @@ mac_info() {
 	else
 		echo "None"
 	fi
+
+	echo "     \`#######################'
+       \`###################'
+         \`#######''######'
+           \`\"\"\"\"'  \`\"\"\"'
+	"
 
 	echo "------------" && echo
 }
@@ -395,38 +487,38 @@ windows_info() {
 	sys_installed=$(date -d "${sys_installed}" +"%d %b %Y")
 
 	# Output results
-	echo "Manufacturer: ${comp_sys_info[0]}"
-	echo "Model: ${comp_sys_info[1]}"
-	echo "Serial: ${serial_no}"
-	echo "OS: ${os_sys_info[4]}"
-	echo "Kernel: NT ${os_sys_info[7]}"
-	echo "CPU: ${cpu_info[1]} x ${cpu_info[2]}"
-	echo "GPU: ${video_card_info[2]} ($((video_card_info[0] / 1048576)) MB)"
-	echo "Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB"
-	echo "Mem Free: $(( os_sys_info[0] / 1000 )) MB"
-	echo "Disk Model: ${disk_drive_info[1]}"
-	echo "Disk Size: $(( disk_drive_info[2] / 1000000000 )) GB"
-	echo "Disk Free: $(round ""${disk_free}"/1073741824" "0" ) GB"
-	echo "SMART Status: ${smart_stat}"
-	# Start checking AV status
-	echo -n "AV Status: "
+	echo "
+        ,.=:^!^!t3Z3z.,              	Manufacturer: ${comp_sys_info[0]}
+       :tt:::tt333EE3                 	Model: ${comp_sys_info[1]}
+       Et:::ztt33EEE  @Ee.,      ..,   	Serial: ${serial_no}
+      ;tt:::tt333EE7 ;EEEEEEttttt33#  	OS: ${os_sys_info[4]}
+     :Et:::zt333EEQ. SEEEEEttttt33QL   	Kernel: NT ${os_sys_info[7]}
+     it::::tt333EEF @EEEEEEttttt33F   	CPU: ${cpu_info[1]} x ${cpu_info[2]}
+    ;3=*^\`\`\`'*4EEV :EEEEEEttttt33@.	GPU: ${video_card_info[2]} ($((video_card_info[0] / 1048576)) MB)
+    ,.=::::it=., \` @EEEEEEtttz33QF   	Mem Total: $(round ""${comp_sys_info[3]}"/1073741824" "0" ) GB
+   ;::::::::zt33)   '4EEEtttji3P*     	Mem Free: $(( os_sys_info[0] / 1000 )) MB
+  :t::::::::tt33.:Z3z..  \`\` ,..g.  	Disk Model: ${disk_drive_info[1]}
+  i::::::::zt33F AEEEtttt::::ztF       	Disk Size: $(( disk_drive_info[2] / 1000000000 )) GB
+ ;:::::::::t33V ;EEEttttt::::t3       	SMART Status: ${smart_stat}"
 	# Interate through every installed AV program
 	for i in ${!av_soft[@]}; do
 		# Procceed for every third data item (AV status)
-    	 if (( $(($((i+1)) % 3 )) == 0 )); then
-				# Check AV status value
-                check_win_security "${av_soft[${i}]}"
-                # If not first AV program, add space before output
-                if ! $fst_av ; then echo -n "           " ; fi
-                # Print AV status description
-                echo "${av_soft[$((i-2))]} is ${rtstatus} & ${defstatus}"
-                # Record an AV has been proccessed (subsequent are not the first)
-                local fst_av=false
-        fi
+		if (( $(($((i+1)) % 3 )) == 0 )); then
+			# Check AV status value
+			check_win_security "${av_soft[${i}]}"
+			# If not first AV program, add space before output
+			if ! $fst_av ; then echo -n " E::::::::zt33L @EEEtttt::::z3F                    " ; fi
+			if $fst_av ; then echo -n " E::::::::zt33L @EEEtttt::::z3F        	AV Status: " ; fi
+			# Print AV status description
+			echo "${av_soft[$((i-2))]} is ${rtstatus} & ${defstatus}"
+			# Record an AV has been proccessed (subsequent are not the first)
+			local fst_av=false
+		fi
 	done
-	echo "System Installed: ${sys_installed}"
-	echo "Uptime: $(display_time "${sys_up}")"
-	echo "Users Logged In: ${pc_users}"
+	echo "{3=*^\`\`\`'*4E3) ;EEEtttt:::::tZ\`  	System Installed: ${sys_installed}
+            \` :EEEEtttt::::z7        	Uptime: $(display_time "${sys_up}")
+                'VEzjt:;;z>*\`         	Users Logged In: ${pc_users}"
+
 	echo "------------" && echo
 
 	# Clear AV lists
