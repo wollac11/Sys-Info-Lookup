@@ -357,7 +357,7 @@ mac_info() {
 	echo -n "@@@@@@@@@@@@@@@@@@@@@@@@@@:      	"
 
 	# Calculate disk drive capacity & usage
-	total_hdd=$(diskutil info disk0 | grep "Disk Size" | awk '{print $3,$4}')
+	total_hdd=$(diskutil info disk0 | grep 	-m 1 "Size" | awk '{print $3,$4}')
 	free_hdd=$(df -bg / | grep / | awk '{print $4}')
 	# Output disk drive stats
 	echo "Disk Size: ${total_hdd}"
