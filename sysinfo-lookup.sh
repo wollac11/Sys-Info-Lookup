@@ -7,7 +7,7 @@ source "./sysinfo-lookup.conf"
 print_info() {
 	echo "-----------------------
 ----SYS INFO LOOKUP----
-------Version 1.2------
+------Version 1.3------
 --Charlie Callow 2017--
 -----------------------
 "
