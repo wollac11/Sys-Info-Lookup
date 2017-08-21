@@ -435,22 +435,22 @@ windows_info() {
 	echo && echo "-- ${host}: --" | tr /a-z/ /A-Z/
 
 	# Build arrays of computer info
-	IFS='|' read -r -a os_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT FreePhysicalMemory,Name,InstallDate,LastBootUpTime,LocalDateTime,Version FROM Win32_OperatingSystem" | tail -1)
-	IFS='|' read -r -a comp_sys_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
-	IFS='|' read -r -a cpu_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Name,NumberOfLogicalProcessors from Win32_Processor" | tail -1)
-	IFS='|' read -r -a disk_drive_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Status,Model,Size FROM Win32_DiskDrive" | grep "PHYSICALDRIVE0")
-	IFS='|' read -r -a video_card_info <<< $(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT Name,AdapterRAM from Win32_VideoController" | tail -1)
+	IFS='|' read -r -a os_sys_info <<< $(${wmic_bin} -U "${win_domain}\\${user}" --password=${pass} //${host} "SELECT FreePhysicalMemory,Name,InstallDate,LastBootUpTime,LocalDateTime,Version FROM Win32_OperatingSystem" | tail -1)
+	IFS='|' read -r -a comp_sys_info <<< $(${wmic_bin} -U "${win_domain}\\${user}" --password=${pass} //${host} "SELECT TotalPhysicalMemory,Manufacturer,Model,Username FROM Win32_ComputerSystem" | tail -1)
+	IFS='|' read -r -a cpu_info <<< $(${wmic_bin} -U "${win_domain}\\${user}" --password=${pass} //${host} "SELECT Name,NumberOfLogicalProcessors from Win32_Processor" | tail -1)
+	IFS='|' read -r -a disk_drive_info <<< $(${wmic_bin} -U "${win_domain}\\${user}" --password=${pass} //${host} "SELECT Status,Model,Size FROM Win32_DiskDrive" | grep "PHYSICALDRIVE0")
+	IFS='|' read -r -a video_card_info <<< $(${wmic_bin} -U "${win_domain}\\${user}" --password=${pass} //${host} "SELECT Name,AdapterRAM from Win32_VideoController" | tail -1)
 
 	# Get Serial no.
-	serial_no=$(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT SerialNumber from Win32_Bios" | tail -1 | awk -F\| '{print $2}')
+	serial_no=$(${wmic_bin} -U "${win_domain}\\${user}" --password=${pass} //${host} "SELECT SerialNumber from Win32_Bios" | tail -1 | awk -F\| '{print $2}')
 
 	# Get free disk space
-	disk_free=$(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} "SELECT FreeSpace from Win32_LogicalDisk" | grep "C:" | awk -F\| '{print $2}')
+	disk_free=$(${wmic_bin} -U "${win_domain}\\${user}" --password=${pass} //${host} "SELECT FreeSpace from Win32_LogicalDisk" | grep "C:" | awk -F\| '{print $2}')
 
 	# Get status for each AV program into an array
 	while IFS= read -r line ; do
 	    av_info+=("${line}")
-	done < <(${wmic_bin} -A winauthfile -U ${user} --password=${pass} //${host} --namespace='root\SecurityCenter2' "SELECT displayName,productState FROM AntiVirusProduct" | tail -n +3)
+	done < <(${wmic_bin} -U "${win_domain}\\${user}" --password=${pass} //${host} --namespace='root\SecurityCenter2' "SELECT displayName,productState FROM AntiVirusProduct" | tail -n +3)
 
 	# Iterate through each AV program
 	for i in "${av_info[@]}"
