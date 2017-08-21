@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# Set defaults
-user=$USER
-wmic_bin=./DEPENDS/wmic_ubuntu_x64	# Location of WMIC-Client binary
+# Load defaults from config file
+source "./sysinfo-lookup.conf"
 
 # Intro header
 print_info() {
