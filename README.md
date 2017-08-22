@@ -26,9 +26,9 @@ Download and run script from BASH shell. Script can be used interactively or by 
 - A Unix-based operating system (such as Linux or MacOS)
 - BASH Shell
 - cURL
-- WMIC (binary auto-downloaded if missing)
-- smartmontools (on target Linux systems)
-- WMI allowed by firewall (on Windows Target systems)
+- WMIC (for Windows targets, auto-downloaded if missing)
+- smartmontools (on Linux targets)
+- WMI allowed by firewall (on Windows targets)
 
 **Serial Number Lookup Compatibility:**
 
